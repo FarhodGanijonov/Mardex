@@ -1,5 +1,7 @@
-from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from rest_framework import serializers
+from users.models import AbstractUser
+from job.models import Job, CategoryJob
 
 User = get_user_model()
 
@@ -76,3 +78,30 @@ class WorkerSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['avatar', 'description', 'full_name', 'job_category', 'job_id', 'role']
+
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+    # Bu yerda job_category va job_id ni ID orqali yangilash mumkin
+    job_category = serializers.PrimaryKeyRelatedField(queryset=CategoryJob.objects.all())
+    job_id = serializers.PrimaryKeyRelatedField(queryset=Job.objects.all(),
+                                                many=True)  # job_id - bu ManyToManyField, shuning uchun many=True
+
+    class Meta:
+        model = AbstractUser  # Bu serializer AbstractUser modeliga tegishli
+        fields = ['job_category', 'job_id']  # faqat job_category va job_id ni yangilaymiz
+
+    # Yangilanishni amalga oshirish
+    def update(self, instance, validated_data):
+        # Yangi job_category va job_id ni olish
+        job_category_data = validated_data.get('job_category')
+        if job_category_data:
+            instance.job_category = job_category_data  # job_category ni yangilash
+
+        job_data = validated_data.get('job_id')
+        if job_data:
+            instance.job_id.set(job_data)  # job_id (ManyToMany) ni yangilash
+
+        instance.save()  # O'zgartirishlarni saqlash
+        return instance
+
+
