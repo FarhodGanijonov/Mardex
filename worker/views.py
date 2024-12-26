@@ -4,6 +4,8 @@ from rest_framework import generics, status
 from rest_framework.generics import UpdateAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated  # Foydalanuvchi autentifikatsiyasi
 from rest_framework_simplejwt.tokens import RefreshToken
+
+from client.models import Order
 from job.models import Job, CategoryJob
 from job.serializer import JobSerializer, CategoryJobSerializer
 from .serializers import WorkerRegistrationSerializer, WorkerLoginSerializer, \
@@ -178,3 +180,20 @@ def categoryjob_list(request):
     category_jobs = CategoryJob.objects.all()
     serializer = CategoryJobSerializer(category_jobs, many=True, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class OrderStatisticsAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        total_orders = Order.objects.filter(worker=user).count()
+        success_orders = Order.objects.filter(worker=user, status='success').count()
+        cancel_client_orders = Order.objects.filter(worker=user, status='cancel_client').count()
+
+        # Natijalarni JSON formatida qaytarish
+        return Response({
+            "total_orders": total_orders,
+            "success_orders": success_orders,
+            "cancel_client_orders": cancel_client_orders,
+        })

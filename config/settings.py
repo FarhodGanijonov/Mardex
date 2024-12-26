@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-sfxtedi$dh=#e!n=#nwmi35^(26o0(z556j5-7d+^%e#n3t6$z
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'drf_yasg',
 
-    # 'client.apps.ClientConfig',
+    'client.apps.ClientConfig',
     'worker.apps.WorkerConfig',
     'job.apps.JobConfig',
     'users.apps.UsersConfig',

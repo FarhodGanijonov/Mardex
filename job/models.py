@@ -30,7 +30,6 @@ class Job(models.Model):
         ordering = ['created_at']
 
 
-
 class City(models.Model):
     title = models.CharField(max_length=255, verbose_name="City Name")
 
@@ -52,5 +51,3 @@ class Region(models.Model):
 
     def __str__(self):
         return self.title
-
-

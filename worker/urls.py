@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import WorkerRegistrationView, WorkerLoginView, WorkerPasswordChangeView, WorkerDetailView, \
-    JobListByCategoryView, categoryjob_list, UpdateUserJobView
+    JobListByCategoryView, categoryjob_list, UpdateUserJobView, OrderStatisticsAPIView
 
 urlpatterns = [
     path('register/', WorkerRegistrationView.as_view(), name='worker-register'),
@@ -15,5 +15,6 @@ urlpatterns = [
     path('category_jobs/<int:pk>/', JobListByCategoryView.as_view(), name='jobs_by_category'),
 
     path('update_user_job/', UpdateUserJobView.as_view(), name='jobs_by_category'),
+    path('order-statistics/', OrderStatisticsAPIView.as_view(), name='order-statistics'),
 
 ]
