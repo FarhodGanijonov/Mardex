@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from users.models import AbstractUser
 from job.models import Job, CategoryJob
+from worker.models import ProfilImage, WorkerProfile
 
 User = get_user_model()
 
@@ -12,7 +13,7 @@ class WorkerRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['full_name', 'phone', 'password', 'password_confirmation', 'region', 'city', 'gender']
+        fields = ['id', 'full_name', 'phone', 'password', 'password_confirmation', 'region', 'city', 'gender']
 
     def validate(self, data):
         if data['password'] != data['password_confirmation']:
@@ -101,7 +102,28 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         if job_data:
             instance.job_id.set(job_data)  # job_id (ManyToMany) ni yangilash
 
-        instance.save()  # O'zgartirishlarni saqlash
+        instance.save()
         return instance
 
 
+class WorkerJobSerializer(serializers.ModelSerializer):
+    job_category = serializers.StringRelatedField()  # Kategoriyani matn sifatida qaytaradi
+    job_id = serializers.StringRelatedField(many=True)  # Ko'p ishlari (ManyToManyField) matn sifatida
+
+    class Meta:
+        model = AbstractUser
+        fields = ['id', 'full_name', 'job_category', 'job_id']
+
+
+class WorkerImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProfilImage
+        fields = ['id', 'image']
+
+
+class WorkerProfileSerializer(serializers.ModelSerializer):
+    images = WorkerImageSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = WorkerProfile
+        fields = ['id', 'fullname', 'description', 'avatar', 'reyting', 'images']
