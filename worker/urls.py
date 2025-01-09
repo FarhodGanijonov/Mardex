@@ -2,7 +2,7 @@ from django.urls import path
 from .views import WorkerRegistrationView, WorkerLoginView, WorkerPasswordChangeView, WorkerDetailView, \
     JobListByCategoryView, categoryjob_list, UpdateUserJobView, OrderStatisticsAPIView, \
     WorkerProfileUpdateView, AddWorkerImageView, DeleteWorkerImageView, WorkerProfileListView, \
-    DeleteAllWorkerImagesView, WorkerJobListView
+    DeleteAllWorkerImagesView, WorkerJobListView, JobSearchAPIView
 
 urlpatterns = [
     path('register/', WorkerRegistrationView.as_view(), name='worker-register'),
@@ -29,5 +29,7 @@ urlpatterns = [
     path('worker-profiles/images/delete/<int:image_id>/', DeleteWorkerImageView.as_view(), name='delete-worker-image'),
     path('worker-profiles/images/delete/all/', DeleteAllWorkerImagesView.as_view(), name='delete-all-worker-images'),
     path('worker-profiles/<int:pk>/update/', WorkerProfileUpdateView.as_view(), name='update-worker-profile'),
+
+    path('worker-job-search/', JobSearchAPIView.as_view(), name='job-search'),
 
 ]

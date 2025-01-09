@@ -6,6 +6,7 @@ from .models import CategoryJob, Job, City, Region
 class CategoryJobAdmin(admin.ModelAdmin):
     list_display = ('title', 'created_at')
     search_fields = ('title',)
+    fields = ['title_uz', 'title_ru', 'title_en',]
     ordering = ('created_at',)
 
 
@@ -13,6 +14,7 @@ class CategoryJobAdmin(admin.ModelAdmin):
 class JobAdmin(admin.ModelAdmin):
     list_display = ('title', 'category_job', 'created_at')
     search_fields = ('title',)
+    fields = ['title_uz', 'title_ru', 'title_en',]
     ordering = ('created_at',)
 
 
@@ -20,12 +22,14 @@ class JobAdmin(admin.ModelAdmin):
 class CityAdmin(admin.ModelAdmin):
     list_display = ('title',)
     search_fields = ('title',)
+    fields = ['title_uz', 'title_ru', 'title_en',]
 
 
 @admin.register(Region)
 class RegionAdmin(admin.ModelAdmin):
     list_display = ('title', 'city_id')
     search_fields = ('title',)
+    fields = ['title_uz', 'title_ru', 'title_en',]
     ordering = ('title',)
 
 

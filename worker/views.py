@@ -5,6 +5,7 @@ from rest_framework.generics import UpdateAPIView, RetrieveAPIView
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import AllowAny, IsAuthenticated  # Foydalanuvchi autentifikatsiyasi
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.db.models import Q
 
 from client.models import Order
 from job.models import Job, CategoryJob
@@ -217,3 +218,23 @@ class DeleteAllWorkerImagesView(APIView):
         profile = request.user.worker_profile
         profile.profileimage.all().delete()
         return Response({"message": "Barcha tasvirlar o'chirildi."}, status=204)
+
+
+class JobSearchAPIView(APIView):
+    def get(self, request):
+        query = request.query_params.get('q', '')
+
+        if not query:
+            return Response({"error": "Qidiruv so'rovini kiriting (q)"},)
+
+        # Harflar bo'yicha qidiruv
+        categories = CategoryJob.objects.filter(title__icontains=query)
+        jobs = Job.objects.filter(Q(title__icontains=query) | Q(category_job__title__icontains=query))
+
+        category_serializer = CategoryJobSerializer(categories, many=True, context={'request': request})
+        job_serializer = JobSerializer(jobs, many=True, context={'request': request})
+
+        return Response({
+            "categories": category_serializer.data,
+            "jobs": job_serializer.data
+        })
