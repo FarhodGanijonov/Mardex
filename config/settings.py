@@ -43,10 +43,10 @@ INSTALLED_APPS = [
 
 
     #kutubxonalar
+    'modeltranslation',
     'rest_framework',
     'rest_framework_simplejwt',
     'drf_yasg',
-    'modeltranslation',
 
     'client.apps.ClientConfig',
     'worker.apps.WorkerConfig',
