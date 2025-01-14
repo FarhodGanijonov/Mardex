@@ -29,7 +29,7 @@ class CityAdmin(admin.ModelAdmin):
 class RegionAdmin(admin.ModelAdmin):
     list_display = ('title', 'city_id')
     search_fields = ('title',)
-    fields = ['title_uz', 'title_ru', 'title_en',]
+    fields = ['title_uz', 'title_ru', 'title_en', 'city_id']
     ordering = ('title',)
 
 
