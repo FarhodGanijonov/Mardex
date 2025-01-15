@@ -1,10 +1,9 @@
-from django.urls import path,include
+from django.urls import path, include
 from .views import WorkerRegistrationView, WorkerLoginView, WorkerPasswordChangeView, WorkerDetailView, \
     JobListByCategoryView, categoryjob_list, UpdateUserJobView, OrderStatisticsAPIView, \
     WorkerProfileUpdateView, AddWorkerImageView, DeleteWorkerImageView, WorkerProfileListView
-
-
-from .views import RegionListByCityView, DeleteAllWorkerImagesView, WorkerJobListView, WorkerPhoneUpdateView, JobSearchAPIView
+from .views import (RegionListByCityView, DeleteAllWorkerImagesView, WorkerJobListView,
+                    WorkerPhoneUpdateView, JobSearchAPIView)
 
 
 urlpatterns = [

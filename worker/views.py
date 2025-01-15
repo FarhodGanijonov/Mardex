@@ -238,6 +238,8 @@ class WorkerPhoneUpdateView(generics.GenericAPIView):
 
 
 class RegionListByCityView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, pk):
         # Shaharning `id`si bo‘yicha City modelini topamiz
         city = get_object_or_404(City, id=pk)
