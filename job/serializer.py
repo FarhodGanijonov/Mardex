@@ -1,5 +1,4 @@
-from rest_framework import serializers
-from .models import CategoryJob, Job, City, Region
+from .models import City, Region
 
 from rest_framework import serializers
 from .models import CategoryJob, Job
@@ -8,20 +7,21 @@ from .models import CategoryJob, Job
 class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Job
-        fields = ['id', 'title', 'image', 'created_at']
+        fields = ['id', 'title_uz', 'title_ru', 'title_en', 'image', 'created_at']
+
 
 class CategoryJobSerializer(serializers.ModelSerializer):
     jobs = JobSerializer(many=True, read_only=True)
 
     class Meta:
         model = CategoryJob
-        fields = ['id', 'title', 'image', 'created_at', 'jobs']
+        fields = ['id', 'title_uz', 'title_ru', 'title_en', 'image', 'created_at', 'jobs']
 
 
 class CitySerializer(serializers.ModelSerializer):
     class Meta:
         model = City
-        fields = ['id', 'title']
+        fields = ['id', 'title_uz', 'title_ru', 'title_en',]
 
 
 class RegionSerializer(serializers.ModelSerializer):
@@ -29,4 +29,4 @@ class RegionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Region
-        fields = ['id', 'title', 'city_id']
+        fields = ['id', 'title_uz', 'title_ru', 'title_en', 'city_id']

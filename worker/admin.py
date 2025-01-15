@@ -11,4 +11,5 @@ class ProfilImageInline(admin.TabularInline):
 @admin.register(WorkerProfile)
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ['id', 'fullname', 'description', 'avatar', 'reyting']
+    fields = ['fullname_uz', 'fullname_ru', 'fullname_en', 'description_uz', 'description_ru', 'description_en']
     inlines = [ProfilImageInline]
