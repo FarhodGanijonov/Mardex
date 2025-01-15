@@ -12,4 +12,3 @@ class ProfilImageInline(admin.TabularInline):
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ['id', 'fullname', 'description', 'avatar', 'reyting']
     inlines = [ProfilImageInline]
-

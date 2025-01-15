@@ -13,11 +13,15 @@ from .models import WorkerProfile, ProfilImage
 from .permissions import IsClient
 from .serializers import WorkerRegistrationSerializer, WorkerLoginSerializer, \
     WorkerPasswordChangeSerializer, WorkerSerializer, UserUpdateSerializer, WorkerProfileSerializer, \
-    WorkerImageSerializer, WorkerJobSerializer
+    WorkerImageSerializer, WorkerJobSerializer, WorkerPhoneUpdateSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from users.models import AbstractUser
 from django.contrib.auth import get_user_model
+from job.models import City, Region
+from .serializers import CitySerializer, RegionSerializer
+
+
 
 User = get_user_model()
 
@@ -42,6 +46,7 @@ class WorkerRegistrationView(generics.CreateAPIView):
             "refresh": str(refresh),
             "access": str(refresh.access_token),
         }, status=status.HTTP_201_CREATED)
+
 
 # login class
 class WorkerLoginView(generics.GenericAPIView):
@@ -217,3 +222,33 @@ class DeleteAllWorkerImagesView(APIView):
         profile = request.user.worker_profile
         profile.profileimage.all().delete()
         return Response({"message": "Barcha tasvirlar o'chirildi."}, status=204)
+
+
+class WorkerPhoneUpdateView(generics.GenericAPIView):
+    serializer_class = WorkerPhoneUpdateSerializer
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({"message": "Phone number updated successfully."}, status=status.HTTP_200_OK)
+
+
+class RegionListByCityView(APIView):
+    def get(self, request, pk):
+        # Shaharning `id`si bo‘yicha City modelini topamiz
+        city = get_object_or_404(City, id=pk)
+
+        # Ushbu shaharga tegishli Regionlarni olish
+        regions = Region.objects.filter(city_id=city)
+
+        # Serializerlar bilan ma'lumotlarni formatlaymiz
+        city_serializer = CitySerializer(city, context={'request': request})
+        regions_serializer = RegionSerializer(regions, many=True, context={'request': request})
+
+        # Natijani birlashtirib qaytaramiz
+        result = city_serializer.data
+        result['regions'] = regions_serializer.data
+
+        return Response(result)

@@ -3,6 +3,7 @@ from rest_framework import serializers
 from users.models import AbstractUser
 from job.models import Job, CategoryJob
 from worker.models import ProfilImage, WorkerProfile
+from job.models import Region, City
 
 User = get_user_model()
 
@@ -127,3 +128,38 @@ class WorkerProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = WorkerProfile
         fields = ['id', 'fullname', 'description', 'avatar', 'reyting', 'images']
+
+
+class WorkerPhoneUpdateSerializer(serializers.Serializer):
+    old_password = serializers.CharField(write_only=True)
+    new_phone = serializers.CharField()
+
+    def validate_old_password(self, value):
+        user = self.context['request'].user
+        if not user.check_password(value):
+            raise serializers.ValidationError("Old password is incorrect.")
+        return value
+
+    def validate_new_phone(self, value):
+        if User.objects.filter(phone=value).exists():
+            raise serializers.ValidationError("This phone number is already in use.")
+        return value
+
+    def save(self, **kwargs):
+        user = self.context['request'].user
+        new_phone = self.validated_data['new_phone']
+        user.phone = new_phone
+        user.save()
+        return user
+
+
+class CitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = City
+        fields = ['id', 'title']  # Kerakli maydonlarni kiriting
+
+
+class RegionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Region
+        fields = ['id', 'title',]  # Kerakli maydonlarni kiriting

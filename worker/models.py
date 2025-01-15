@@ -57,4 +57,27 @@ def create_worker_profile(sender, instance, created, **kwargs):
     if created:
         WorkerProfile.objects.create(user=instance)
 
-
+#
+# class WorkerTariff(models.Model):
+#     name = models.CharField(max_length=100)  # Tarif nomi, masalan, "Tekin", "Start", "Active"
+#     price = models.PositiveIntegerField(default=0)  # Tarif narxi (so'mda)
+#     top_limit = models.PositiveIntegerField()  # Necha marta "top" qilish imkoniyati
+#     call_limit = models.PositiveIntegerField()  # Necha marta "vizov" qilish imkoniyati
+#
+#
+#     def __str__(self):
+#         return f"{self.name} - {self.price} so'm"
+#
+#     class Meta:
+#         verbose_name = "Worker Tarif"
+#         verbose_name_plural = "Worker Tariflar"
+#
+#
+# class TarifHaridi(models.Model):
+#     user = models.ForeignKey(
+#         AbstractUser,
+#         on_delete=models.CASCADE,
+#         null=True,
+#         related_name='worker_harid')
+#     tarif_id = models.ForeignKey(WorkerTariff, on_delete=models.CASCADE,null=True)
+#     status = models.BooleanField(default=True)
