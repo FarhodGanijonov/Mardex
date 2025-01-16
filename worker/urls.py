@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path
 from .views import WorkerRegistrationView, WorkerLoginView, WorkerPasswordChangeView, WorkerDetailView, \
     JobListByCategoryView, categoryjob_list, UpdateUserJobView, OrderStatisticsAPIView, \
     WorkerProfileUpdateView, AddWorkerImageView, DeleteWorkerImageView, WorkerProfileListView
