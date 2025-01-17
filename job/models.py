@@ -17,8 +17,8 @@ class CategoryJob(models.Model):
 
 class Job(models.Model):
     title = models.CharField(max_length=250)
-    category_job = models.ForeignKey(CategoryJob, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='job_pics/', blank=True, null=True)  # rasmni saqlash
+    category_job = models.ForeignKey(CategoryJob, on_delete=models.CASCADE, null=True, blank=True)
+    image = models.ImageField(upload_to='job_pics/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -28,6 +28,7 @@ class Job(models.Model):
         verbose_name = 'Job'
         verbose_name_plural = 'Jobs'
         ordering = ['created_at']
+
 
 
 class City(models.Model):

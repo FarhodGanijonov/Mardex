@@ -7,7 +7,7 @@ from .models import CategoryJob, Job
 class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Job
-        fields = ['id', 'title_uz', 'title_ru', 'title_en', 'image', 'created_at']
+        fields = ['id', 'title_uz', 'title_ru', 'title_en', 'category_job', 'image', 'created_at']
 
 
 class CategoryJobSerializer(serializers.ModelSerializer):

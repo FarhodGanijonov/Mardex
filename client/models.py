@@ -27,9 +27,8 @@ class Order(models.Model):
     price = models.CharField(max_length=255, blank=True, null=True)
     desc = models.TextField(default="", blank=True, null=True)
     full_desc = models.TextField(default="", blank=True, null=True)
+    image = models.ImageField(upload_to='client_image/', blank=True, null=True)
     work_count = models.IntegerField(default=1)
-    # location = models.JSONField(default=dict)
-    images = models.ImageField(upload_to='order_image/', blank=True, null=True)
     is_finish = models.BooleanField(default=False)
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='Male')
     view_count = models.IntegerField(default=0)
@@ -38,6 +37,8 @@ class Order(models.Model):
         choices=STATUS_CHOICES,
         default='stable'
     )
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
