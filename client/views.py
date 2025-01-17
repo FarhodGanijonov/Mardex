@@ -42,14 +42,17 @@ def categoryjob_list(request):
     category_jobs = CategoryJob.objects.all()
     serializer = CategoryJobSerializer(category_jobs, many=True, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
+
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.generics import UpdateAPIView, RetrieveAPIView
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import AllowAny, IsAuthenticated  # Foydalanuvchi autentifikatsiyasi
+from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializer import ClientRegistrationSerializer, ClientLoginSerializer, ClientPasswordChangeSerializer
+from .serializer import (ClientRegistrationSerializer, ClientLoginSerializer, ClientPasswordChangeSerializer,
+                         ClientDetailSerializer)
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
@@ -103,3 +106,37 @@ class ClientPasswordChangeView(generics.GenericAPIView):
 
     def perform_update(self, serializer):
         serializer.save()
+
+
+
+
+# class WorkerProfileListView(APIView):
+#     permission_classes = [IsAuthenticated, IsClient]
+#
+#     def get(self, request):
+#         location = request.query_params.get('location')
+#         if location:
+#             workers = WorkerProfile.objects.filter(user__location__icontains=location)
+#         else:
+#             workers = WorkerProfile.objects.all()
+#
+#         serializer = WorkerProfileSerializer(workers, many=True)
+#         return Response(serializer.data)
+#
+#
+# class WorkerProfileUpdateView(UpdateAPIView):
+#     queryset = WorkerProfile.objects.all()
+#     serializer_class = WorkerProfileSerializer
+#     permission_classes = [IsAuthenticated]
+#
+#     def get_object(self):
+#         return self.request.user.worker_profile
+
+class ClientProfileView(APIView):
+    def get(self, request):
+        if request.user.is_authenticated:
+            serializer = ClientDetailSerializer(request.user)
+            return Response(serializer.data)
+        else:
+            return Response({"detail": "Foydalanuvchi tizimga kirmagan"}, status=401)
+

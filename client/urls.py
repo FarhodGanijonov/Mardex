@@ -1,4 +1,5 @@
 from django.urls import path
+
 from .views import OrderListView, OrderDetailView, JobListByCategoryView, categoryjob_list
 from django.conf import settings
 from django.conf.urls.static import static
@@ -12,12 +13,14 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-from .views import ClientRegistrationView, ClientLoginView, ClientPasswordChangeView
+
+from .views import ClientRegistrationView, ClientLoginView, ClientPasswordChangeView, ClientProfileView
+
 
 urlpatterns = [
     path('register/', ClientRegistrationView.as_view(), name='client-register'),
     path('login/', ClientLoginView.as_view(), name='client-login'),
     path('password-change/', ClientPasswordChangeView.as_view(), name='client-password-change'),
+    path('profile/', ClientProfileView.as_view(), name='client-profile'),
 ]
 
-# yozdim

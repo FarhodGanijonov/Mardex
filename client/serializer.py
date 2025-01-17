@@ -12,7 +12,10 @@ class OrderSerializer(serializers.ModelSerializer):
             'is_finish', 'gender', 'view_count', 'status', 'created_at',
             'latitude', 'longitude'
         ]
+
+from rest_framework import serializers
 from django.contrib.auth import get_user_model
+
 User = get_user_model()
 
 
@@ -82,3 +85,18 @@ class ClientPasswordChangeSerializer(serializers.Serializer):
         user.set_password(self.validated_data['new_password'])
         user.save()
         return user
+
+
+class ClientDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'phone', 'full_name']
+
+
+#
+# class WorkerProfileSerializer(serializers.ModelSerializer):
+#     images = WorkerImageSerializer(many=True, read_only=True)
+#
+#     class Meta:
+#         model = WorkerProfile
+#         fields = ['id', 'fullname', 'description', 'avatar', 'reyting', 'images']
