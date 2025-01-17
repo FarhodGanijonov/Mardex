@@ -14,7 +14,7 @@ class CategoryJobAdmin(admin.ModelAdmin):
 class JobAdmin(admin.ModelAdmin):
     list_display = ('title', 'category_job', 'created_at')
     search_fields = ('title',)
-    fields = ['title_uz', 'title_ru', 'title_en',]
+    fields = ['title_uz', 'title_ru', 'title_en', 'category_job',]
     ordering = ('created_at',)
 
 

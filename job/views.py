@@ -66,3 +66,4 @@ def region_in_city(request, pk):
     serializer = RegionSerializer(regions, many=True, context={'request': request})
     return Response(serializer.data)
 
+
