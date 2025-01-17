@@ -14,7 +14,7 @@ class CategoryJobAdmin(admin.ModelAdmin):
 class JobAdmin(admin.ModelAdmin):
     list_display = ('title', 'category_job', 'created_at')
     search_fields = ('title',)
-    fields = ['title_uz', 'title_ru', 'title_en', 'category_job',]
+    fields = ['title_uz', 'title_ru', 'title_en',]
     ordering = ('created_at',)
 
 
@@ -29,7 +29,7 @@ class CityAdmin(admin.ModelAdmin):
 class RegionAdmin(admin.ModelAdmin):
     list_display = ('title', 'city_id')
     search_fields = ('title',)
-    fields = ['title_uz', 'title_ru', 'title_en', 'city_id',]
+    fields = ['title_uz', 'title_ru', 'title_en',]
     ordering = ('title',)
 
 

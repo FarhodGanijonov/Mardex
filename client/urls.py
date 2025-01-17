@@ -1,4 +1,5 @@
 from django.urls import path
+<<<<<<< HEAD
 from .views import OrderListView, OrderDetailView, JobListByCategoryView, categoryjob_list
 from django.conf import settings
 from django.conf.urls.static import static
@@ -12,3 +13,12 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+=======
+from .views import ClientRegistrationView, ClientLoginView, ClientPasswordChangeView
+
+urlpatterns = [
+    path('register/', ClientRegistrationView.as_view(), name='client-register'),
+    path('login/', ClientLoginView.as_view(), name='client-login'),
+    path('password-change/', ClientPasswordChangeView.as_view(), name='client-password-change'),
+]
+>>>>>>> aa2505376e5c615e6f22ca7055eb00927ea3a686

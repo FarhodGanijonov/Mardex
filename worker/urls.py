@@ -1,8 +1,10 @@
 from django.urls import path
 from .views import WorkerRegistrationView, WorkerLoginView, WorkerPasswordChangeView, WorkerDetailView, \
     JobListByCategoryView, categoryjob_list, UpdateUserJobView, OrderStatisticsAPIView, \
-    WorkerProfileUpdateView, AddWorkerImageView, DeleteWorkerImageView, WorkerProfileListView, \
-    DeleteAllWorkerImagesView, WorkerJobListView, JobSearchAPIView
+    WorkerProfileUpdateView, AddWorkerImageView, DeleteWorkerImageView, WorkerProfileListView
+from .views import (RegionListByCityView, DeleteAllWorkerImagesView, WorkerJobListView,
+                    WorkerPhoneUpdateView, JobSearchAPIView)
+
 
 urlpatterns = [
     path('register/', WorkerRegistrationView.as_view(), name='worker-register'),
@@ -30,6 +32,13 @@ urlpatterns = [
     path('worker-profiles/images/delete/all/', DeleteAllWorkerImagesView.as_view(), name='delete-all-worker-images'),
     path('worker-profiles/<int:pk>/update/', WorkerProfileUpdateView.as_view(), name='update-worker-profile'),
 
+
+    path('api/worker/update-phone/', WorkerPhoneUpdateView.as_view(), name='worker-update-phone'),
+
+    path('api/city/<int:pk>/', RegionListByCityView.as_view(), name='region-list-by-city'),
+
+
     path('worker-job-search/', JobSearchAPIView.as_view(), name='job-search'),
+
 
 ]
