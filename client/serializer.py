@@ -92,7 +92,6 @@ class ClientDetailSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'phone', 'full_name']
 
-
 #
 # class WorkerProfileSerializer(serializers.ModelSerializer):
 #     images = WorkerImageSerializer(many=True, read_only=True)
