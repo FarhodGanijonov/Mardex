@@ -19,3 +19,5 @@ urlpatterns = [
     path('login/', ClientLoginView.as_view(), name='client-login'),
     path('password-change/', ClientPasswordChangeView.as_view(), name='client-password-change'),
 ]
+
+# yozdim
