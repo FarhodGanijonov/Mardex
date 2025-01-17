@@ -1,5 +1,4 @@
 from rest_framework import serializers
-<<<<<<< HEAD
 from .models import Order
 
 
@@ -13,7 +12,6 @@ class OrderSerializer(serializers.ModelSerializer):
             'is_finish', 'gender', 'view_count', 'status', 'created_at',
             'latitude', 'longitude'
         ]
-=======
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
@@ -84,4 +82,3 @@ class ClientPasswordChangeSerializer(serializers.Serializer):
         user.set_password(self.validated_data['new_password'])
         user.save()
         return user
->>>>>>> aa2505376e5c615e6f22ca7055eb00927ea3a686
