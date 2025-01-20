@@ -279,5 +279,5 @@ class JobSearchAPIView(APIView):
 @api_view(['GET'])
 def workernews_list(request):
     news = WorkerNews.objects.all()
-    serializer = WorkerImageSerializer(news, many=True, context={'request': request})
+    serializer = WorkerNewsSerializer(news, many=True, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)

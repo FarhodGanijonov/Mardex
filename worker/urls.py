@@ -39,7 +39,7 @@ urlpatterns = [
 
 
     path('worker-job-search/', JobSearchAPIView.as_view(), name='job-search'),
-    path('news', workernews_list)
+    path('workernews/', workernews_list)
 
 
 ]
