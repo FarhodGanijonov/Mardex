@@ -226,7 +226,6 @@ class DeleteAllWorkerImagesView(APIView):
         return Response({"message": "Barcha tasvirlar o'chirildi."}, status=204)
 
 
-
 class WorkerPhoneUpdateView(generics.GenericAPIView):
     serializer_class = WorkerPhoneUpdateSerializer
     permission_classes = [IsAuthenticated]

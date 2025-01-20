@@ -1,8 +1,8 @@
 from django.urls import path
-from .views import OrderListView, OrderDetailView, JobListByCategoryView, categoryjob_list
+from .views import OrderListView, OrderDetailView, JobListByCategoryView, categoryjob_list, newsclient_list
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import ClientRegistrationView, ClientLoginView, ClientPasswordChangeView, clientnews_list
+from .views import ClientRegistrationView, ClientLoginView, ClientPasswordChangeView
 
 urlpatterns = [
     path('orders/', OrderListView.as_view(), name='order-list'),
@@ -12,10 +12,9 @@ urlpatterns = [
     path('register/', ClientRegistrationView.as_view(), name='client-register'),
     path('login/', ClientLoginView.as_view(), name='client-login'),
     path('password-change/', ClientPasswordChangeView.as_view(), name='client-password-change'),
-    path('news/', clientnews_list),
+    path('clientnews/', newsclient_list),
 
 ]
-
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

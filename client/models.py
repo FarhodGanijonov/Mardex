@@ -47,5 +47,5 @@ class Order(models.Model):
 
 class ClientNews(models.Model):
     description = models.TextField()
-    image = models.ImageField(upload_to='client/news/images/', null=True, blank=True)
+    image = models.ImageField(upload_to='client/news_images/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

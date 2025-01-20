@@ -1,19 +1,19 @@
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.viewsets import ReadOnlyModelViewSet
-
 from job.serializer import CategoryJobSerializer, JobSerializer
-from .models import Order, ClientNews
+from .models import Order
 from job.models import Job, CategoryJob
-from .serializer import OrderSerializer, ClientNewsSerializer
+from .serializer import OrderSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny, IsAuthenticated  # Foydalanuvchi autentifikatsiyasi
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializer import ClientRegistrationSerializer, ClientLoginSerializer, ClientPasswordChangeSerializer
 from django.contrib.auth import get_user_model
 User = get_user_model()
+
+
 
 class OrderListView(APIView):
     def get(self, request):
@@ -47,7 +47,6 @@ def categoryjob_list(request):
     category_jobs = CategoryJob.objects.all()
     serializer = CategoryJobSerializer(category_jobs, many=True, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
-
 
 
 class ClientRegistrationView(generics.CreateAPIView):
@@ -100,9 +99,8 @@ class ClientPasswordChangeView(generics.GenericAPIView):
     def perform_update(self, serializer):
         serializer.save()
 
-
 @api_view(['GET'])
-def clientnews_list(request):
-    news = ClientNews.objects.all()
-    serializer = ClientNewsSerializer(news, many=True, context={'request': request})
+def newsclient_list(request):
+    news = CategoryJob.objects.all()
+    serializer = CategoryJobSerializer(news, many=True, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
