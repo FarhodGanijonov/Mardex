@@ -1,9 +1,9 @@
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from job.serializer import CategoryJobSerializer, JobSerializer
-from .models import Order
+from .models import Order, ClientNews
 from job.models import Job, CategoryJob
-from .serializer import OrderSerializer
+from .serializer import OrderSerializer, ClientNewsSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
 from rest_framework.response import Response
@@ -101,6 +101,6 @@ class ClientPasswordChangeView(generics.GenericAPIView):
 
 @api_view(['GET'])
 def newsclient_list(request):
-    news = CategoryJob.objects.all()
-    serializer = CategoryJobSerializer(news, many=True, context={'request': request})
+    news = ClientNews.objects.all()
+    serializer = ClientNewsSerializer(news, many=True, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
