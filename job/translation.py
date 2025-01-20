@@ -21,3 +21,5 @@ class CityTranslationOptions(TranslationOptions):
 @register(Region)
 class RegionTranslationOptions(TranslationOptions):
     fields = ('title',)
+
+

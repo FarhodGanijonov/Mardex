@@ -43,3 +43,9 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order {self.client} by {self.worker}"
+
+
+class ClientNews(models.Model):
+    description = models.TextField()
+    image = models.ImageField(upload_to='client/news/images/', null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)

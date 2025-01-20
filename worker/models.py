@@ -81,3 +81,9 @@ def create_worker_profile(sender, instance, created, **kwargs):
 #         related_name='worker_harid')
 #     tarif_id = models.ForeignKey(WorkerTariff, on_delete=models.CASCADE,null=True)
 #     status = models.BooleanField(default=True)
+
+
+class WorkerNews(models.Model):
+    description = models.TextField()
+    image = models.ImageField(upload_to='workernews_images/', null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)

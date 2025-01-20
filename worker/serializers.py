@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from users.models import AbstractUser
 from job.models import Job, CategoryJob
-from worker.models import ProfilImage, WorkerProfile
+from worker.models import ProfilImage, WorkerProfile, WorkerNews
 from job.models import Region, City
 
 User = get_user_model()
@@ -163,3 +163,9 @@ class RegionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Region
         fields = ['id', 'title',]  # Kerakli maydonlarni kiriting
+
+
+class WorkerNewsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WorkerNews
+        fields = ['id', 'description', 'image', 'created_at']

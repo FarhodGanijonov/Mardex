@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Order
+from .models import Order, ClientNews
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -82,3 +82,9 @@ class ClientPasswordChangeSerializer(serializers.Serializer):
         user.set_password(self.validated_data['new_password'])
         user.save()
         return user
+
+
+class ClientNewsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ClientNews
+        fields = ['id', 'description', 'image', 'created_at',]
