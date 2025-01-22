@@ -63,3 +63,27 @@ class ClientNews(models.Model):
     description = models.TextField()
     image = models.ImageField(upload_to='client/news_images/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+
+class ClientTarif(models.Model):
+    name = models.CharField(max_length=100)  # Tarif nomi
+    price = models.PositiveIntegerField(default=0)  # Tarif narxi
+    top_limit = models.PositiveIntegerField(default=2)  # "Top" qilish limiti
+    call_limit = models.PositiveIntegerField(default=3)  # "Vizov" qilish limiti
+
+    def __str__(self):
+        return f"{self.name} - {self.price} so'm"
+
+    class Meta:
+        verbose_name = "Client Tarif"
+        verbose_name_plural = "Client Tariflar"
+
+
+class TarifHaridi(models.Model):
+    user = models.OneToOneField(
+        AbstractUser,
+        on_delete=models.CASCADE,
+        null=True,
+        related_name='client_harid')
+    tarif_id = models.ForeignKey(ClientTarif, on_delete=models.CASCADE, null=True)
+    status = models.BooleanField(default=True)

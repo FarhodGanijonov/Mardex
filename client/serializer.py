@@ -1,5 +1,11 @@
 from rest_framework import serializers
+
 from .models import Order, ClientNews
+from django.contrib.auth import get_user_model
+User = get_user_model()
+
+
+from .models import Order, ClientNews, ClientTarif, TarifHaridi
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
@@ -16,13 +22,14 @@ class OrderSerializer(serializers.ModelSerializer):
         ]
 
 
+
 class ClientRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     password_confirmation = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
-        fields = ['id', 'full_name', 'phone', 'password', 'password_confirmation', 'region', 'city', 'gender']
+        fields = ['id', 'full_name', 'phone', 'password', 'password_confirmation', 'city', 'region', 'gender']
 
     def validate(self, data):
         if data['password'] != data['password_confirmation']:
@@ -101,7 +108,25 @@ class WorkerProfileSerializer(serializers.ModelSerializer):
 
 
 class ClientNewsSerializer(serializers.ModelSerializer):
+    created_at = serializers.DateTimeField(format='%Y-%m-%d %H:%M')
+
     class Meta:
         model = ClientNews
         fields = ['id', 'description', 'image', 'created_at',]
+
+
+
+
+class ClientTarifSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ClientTarif
+        fields = ['id', 'name', 'price', 'top_limit', 'call_limit',]
+
+
+class TarifHaridiSerializer(serializers.ModelSerializer):
+    tarif_id = ClientTarifSerializer(read_only=True)
+
+    class Meta:
+        model = TarifHaridi
+        fields = ['id', 'user', 'tarif_id', 'status',]
 
