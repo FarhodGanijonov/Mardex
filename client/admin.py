@@ -13,7 +13,7 @@ class OrderAdmin(admin.ModelAdmin):
 @admin.register(ClientNews)
 class ClientNewsAdmin(admin.ModelAdmin):
     list_display = ('created_at', 'description')
-    fields = ['description_uz', 'description_ru', 'description_en', 'image',]
+    fields = ['description_uz', 'description_ru', 'description_en', 'image', ]
     ordering = ('created_at',)
 
 
