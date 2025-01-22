@@ -48,25 +48,15 @@ class Order(models.Model):
         return f"Order {self.client} by {self.worker}"
 
 
-# class ClientProfile(models.Model):
-#     user = models.OneToOneField(
-#         AbstractUser,
-#         on_delete=models.CASCADE,
-#         null=True,
-#         related_name='worker_profile'
-#     )
-#     description = models.TextField(blank=True, null=True)
-#     avatar = models.ImageField(upload_to='worker_image/', blank=True, null=True)
-#     active_orders = models.PositiveIntegerField(default=0)  # Faol buyurtmalar soni
-#     completed_orders = models.PositiveIntegerField(default=0)  # Bajarilgan buyurtmalar soni
-#     cancelled_orders = models.PositiveIntegerField(default=0)  # Bekor qilingan buyurtmalar soni
-#     reyting = models.FloatField(
-#         validators=[
-#             MinValueValidator(0.0),
-#             MaxValueValidator(100.0)
-#         ],
-#         default=0.0
-#     )
-#
-#     def __str__(self):
-#         return self.fullname or "Worker Profile"
+class ClientReyting(models.Model):
+
+    active_orders = models.PositiveIntegerField(default=0)  # Faol buyurtmalar soni
+    completed_orders = models.PositiveIntegerField(default=0)  # Bajarilgan buyurtmalar soni
+    cancelled_orders = models.PositiveIntegerField(default=0)  # Bekor qilingan buyurtmalar soni
+    reyting = models.FloatField(
+        validators=[
+            MinValueValidator(0.0),
+            MaxValueValidator(100.0)
+
+        ], default=0.0,)
+

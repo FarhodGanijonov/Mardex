@@ -147,6 +147,8 @@ class WorkerPhoneUpdateSerializer(serializers.Serializer):
 
     def save(self, **kwargs):
         user = self.context['request'].user
+        if user.role != 'worker':
+            raise serializers.ValidationError("Only workers can update their phone number.")
         new_phone = self.validated_data['new_phone']
         user.phone = new_phone
         user.save()

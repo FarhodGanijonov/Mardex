@@ -1,9 +1,11 @@
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from .models import CategoryJob, Job, City, Region
 from .serializer import CategoryJobSerializer, JobSerializer, CitySerializer, RegionSerializer
-
+from django.shortcuts import get_object_or_404
 
 @api_view(['GET'])
 def category_job_list(request):
@@ -12,11 +14,17 @@ def category_job_list(request):
     return Response(serializer.data)
 
 
-@api_view(['GET'])
-def category_job_recent(request):
-    recent_category_jobs = CategoryJob.objects.all().order_by('-created_at')[:5]
-    serializer = CategoryJobSerializer(recent_category_jobs, many=True, context={'request': request})
-    return Response(serializer.data)
+class JobListByCategoryView(APIView):
+    def get(self, request, pk):
+        category_job = get_object_or_404(CategoryJob, id=pk)
+        jobs = Job.objects.filter(category_job=category_job)
+        category_serializer = CategoryJobSerializer(category_job, context={'request': request})
+        jobs_serializer = JobSerializer(jobs, many=True, context={'request': request})
+
+        result = category_serializer.data
+        result['jobs'] = jobs_serializer.data
+
+        return Response(result)
 
 
 @api_view(['GET'])
@@ -28,10 +36,10 @@ def job_list(request):
 
 @api_view(['GET'])
 def job_similar(request, pk):
-    job = Job.objects.get(id=pk)
-    similar_jobs = Job.objects.filter(category_job=job.category_job)
-    serializer = JobSerializer(similar_jobs, many=True, context={'request': request})
+    job = get_object_or_404(Job, pk=pk)
+    serializer = JobSerializer(job, context={'request': request})
     return Response(serializer.data)
+
 
 
 @api_view(['GET'])

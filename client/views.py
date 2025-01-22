@@ -8,6 +8,7 @@ from .models import Order
 from job.models import Region, Job, CategoryJob
 from .serializer import OrderSerializer
 from django.shortcuts import get_object_or_404
+from users.models import AbstractUser
 
 
 class OrderListView(APIView):
@@ -23,25 +24,6 @@ class OrderDetailView(APIView):
         serializer = OrderSerializer(order)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
-class JobListByCategoryView(APIView):
-    def get(self, request, pk):
-        category_job = get_object_or_404(CategoryJob, id=pk)
-        jobs = Job.objects.filter(category_job=category_job)
-        category_serializer = CategoryJobSerializer(category_job, context={'request': request})
-        jobs_serializer = JobSerializer(jobs, many=True, context={'request': request})
-
-        result = category_serializer.data
-        result['jobs'] = jobs_serializer.data
-
-        return Response(result)
-
-
-@api_view(['GET'])
-def categoryjob_list(request):
-    category_jobs = CategoryJob.objects.all()
-    serializer = CategoryJobSerializer(category_jobs, many=True, context={'request': request})
-    return Response(serializer.data, status=status.HTTP_200_OK)
 
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
@@ -111,7 +93,7 @@ class ClientPasswordChangeView(generics.GenericAPIView):
 
 
 # class WorkerProfileListView(APIView):
-#     permission_classes = [IsAuthenticated, IsClient]
+#     permission_classes = [IsAuthenticated,]
 #
 #     def get(self, request):
 #         location = request.query_params.get('location')
@@ -132,11 +114,35 @@ class ClientPasswordChangeView(generics.GenericAPIView):
 #     def get_object(self):
 #         return self.request.user.worker_profile
 
-class ClientProfileView(APIView):
-    def get(self, request):
-        if request.user.is_authenticated:
-            serializer = ClientDetailSerializer(request.user)
-            return Response(serializer.data)
-        else:
-            return Response({"detail": "Foydalanuvchi tizimga kirmagan"}, status=401)
+# class ClientDetailView(APIView):
+#     def get(self, request, pk):
+#         client = get_object_or_404(AbstractUser, pk=pk)
+#         serializer = ClientDetailSerializer(client, context={'request': request})
+#         return Response(serializer.data)
+#
+#     def patch(self, request, pk):
+#         client = get_object_or_404(AbstractUser, pk=pk)
+#         serializer = ClientDetailSerializer(client, data=request.data, partial=True, context={'request': request})
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_200_OK)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+from rest_framework.permissions import IsAuthenticated
+
+
+class ClientDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        client = request.user
+        serializer = ClientDetailSerializer(client, context={'request': request})
+        return Response(serializer.data)
+
+    def patch(self, request):
+        client = request.user
+        serializer = ClientDetailSerializer(client, data=request.data, partial=True, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

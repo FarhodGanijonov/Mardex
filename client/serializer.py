@@ -86,16 +86,19 @@ class ClientPasswordChangeSerializer(serializers.Serializer):
         user.save()
         return user
 
+from users.models import AbstractUser
+from .models import ClientReyting
+
 
 class ClientDetailSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ['id', 'phone', 'full_name']
+        model = AbstractUser
+        fields = ['id', 'phone', 'full_name', 'avatar', 'description']
 
-#
-# class WorkerProfileSerializer(serializers.ModelSerializer):
-#     images = WorkerImageSerializer(many=True, read_only=True)
-#
-#     class Meta:
-#         model = WorkerProfile
-#         fields = ['id', 'fullname', 'description', 'avatar', 'reyting', 'images']
+
+class WorkerProfileSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ClientReyting
+        fields = ['id', 'reyting', 'active_orders', 'completed_orders', 'cancelled_orders',]
+
