@@ -3,7 +3,7 @@ from .views import WorkerRegistrationView, WorkerLoginView, WorkerPasswordChange
     JobListByCategoryView, categoryjob_list, UpdateUserJobView, OrderStatisticsAPIView, \
     WorkerProfileUpdateView, AddWorkerImageView, DeleteWorkerImageView, WorkerProfileListView
 from .views import (RegionListByCityView, DeleteAllWorkerImagesView, WorkerJobListView,
-                    WorkerPhoneUpdateView, JobSearchAPIView)
+                    WorkerPhoneUpdateView, JobSearchAPIView, workernews_list)
 
 
 urlpatterns = [
@@ -39,6 +39,7 @@ urlpatterns = [
 
 
     path('worker-job-search/', JobSearchAPIView.as_view(), name='job-search'),
+    path('workernews/', workernews_list)
 
 
 ]

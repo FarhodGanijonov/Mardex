@@ -6,7 +6,7 @@ from .models import CategoryJob, Job, City, Region
 class CategoryJobAdmin(admin.ModelAdmin):
     list_display = ('title', 'created_at')
     search_fields = ('title',)
-    fields = ['title_uz', 'title_ru', 'title_en',]
+    fields = ['title_uz', 'title_ru', 'title_en', 'image']
     ordering = ('created_at',)
 
 

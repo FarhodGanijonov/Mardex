@@ -1,5 +1,7 @@
 from rest_framework import serializers
-from .models import Order
+from .models import Order, ClientNews
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -12,11 +14,6 @@ class OrderSerializer(serializers.ModelSerializer):
             'is_finish', 'gender', 'view_count', 'status', 'created_at',
             'latitude', 'longitude'
         ]
-
-from rest_framework import serializers
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
 
 
 class ClientRegistrationSerializer(serializers.ModelSerializer):
@@ -101,4 +98,10 @@ class WorkerProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = ClientReyting
         fields = ['id', 'reyting', 'active_orders', 'completed_orders', 'cancelled_orders',]
+
+
+class ClientNewsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ClientNews
+        fields = ['id', 'description', 'image', 'created_at',]
 

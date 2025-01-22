@@ -4,17 +4,18 @@ from rest_framework import generics, status
 from rest_framework.generics import UpdateAPIView, RetrieveAPIView
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import AllowAny, IsAuthenticated  # Foydalanuvchi autentifikatsiyasi
+from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.db.models import Q
 
 from client.models import Order
 from job.models import Job, CategoryJob
 from job.serializer import JobSerializer, CategoryJobSerializer
-from .models import WorkerProfile, ProfilImage
+from .models import WorkerProfile, ProfilImage, WorkerNews
 from .permissions import IsClient
 from .serializers import WorkerRegistrationSerializer, WorkerLoginSerializer, \
     WorkerPasswordChangeSerializer, WorkerSerializer, UserUpdateSerializer, WorkerProfileSerializer, \
-    WorkerImageSerializer, WorkerJobSerializer, WorkerPhoneUpdateSerializer
+    WorkerImageSerializer, WorkerJobSerializer, WorkerPhoneUpdateSerializer, WorkerNewsSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from users.models import AbstractUser
@@ -275,3 +276,8 @@ class JobSearchAPIView(APIView):
             "jobs": job_serializer.data
         })
 
+@api_view(['GET'])
+def workernews_list(request):
+    news = WorkerNews.objects.all()
+    serializer = WorkerNewsSerializer(news, many=True, context={'request': request})
+    return Response(serializer.data, status=status.HTTP_200_OK)

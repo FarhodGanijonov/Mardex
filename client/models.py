@@ -1,9 +1,7 @@
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from job.models import CategoryJob, Job, Region, City
 from users.models import AbstractUser
-from django.contrib.auth import get_user_model
-from django.core.validators import MinValueValidator, MaxValueValidator
-User = get_user_model()
 
 
 class Order(models.Model):
@@ -60,3 +58,8 @@ class ClientReyting(models.Model):
 
         ], default=0.0,)
 
+
+class ClientNews(models.Model):
+    description = models.TextField()
+    image = models.ImageField(upload_to='client/news_images/', null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
