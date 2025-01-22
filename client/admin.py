@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Order, ClientNews
+from .models import Order, ClientNews, ClientTarif
 
 
 @admin.register(Order)
@@ -15,3 +15,10 @@ class ClientNewsAdmin(admin.ModelAdmin):
     list_display = ('created_at', 'description')
     fields = ['description_uz', 'description_ru', 'description_en', 'image',]
     ordering = ('created_at',)
+
+
+@admin.register(ClientTarif)
+class ClientTarifAdmin(admin.ModelAdmin):
+    list_display = ('name', 'price', 'top_limit', 'call_limit')
+    fields = ['name', 'price', 'top_limit', 'call_limit',]
+    search_fields = ('name',)
