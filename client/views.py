@@ -188,3 +188,10 @@ def tarif_list(request):
 class ClientListView(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = ClientRegistrationSerializer
+
+
+class ClientNewsDetailView(APIView):
+    def get(self, request, pk):
+        client_news = get_object_or_404(ClientNews, pk=pk)
+        serializer = ClientNewsSerializer(client_news, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)

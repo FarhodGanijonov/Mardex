@@ -1,7 +1,8 @@
 from django.urls import path
 from .views import WorkerRegistrationView, WorkerLoginView, WorkerPasswordChangeView, \
     JobListByCategoryView, categoryjob_list, UpdateUserJobView, OrderStatisticsAPIView, \
-    WorkerProfileUpdateView, AddWorkerImageView, DeleteWorkerImageView, WorkerProfileListView, DeleteWorkerImagesView
+    WorkerProfileUpdateView, AddWorkerImageView, DeleteWorkerImageView, WorkerProfileListView, DeleteWorkerImagesView, \
+    WorkerNewsDetailView
 from .views import (RegionListByCityView, DeleteAllWorkerImagesView, WorkerJobListView,
                     WorkerPhoneUpdateView, JobSearchAPIView, workernews_list)
 
@@ -29,6 +30,7 @@ urlpatterns = [
 
     path('worker-job-search/', JobSearchAPIView.as_view(), name='job-search'),
     path('workernews/', workernews_list),
+    path('workernews/<int:pk>/', WorkerNewsDetailView.as_view(), name='workernews-detail'),
 
 
 

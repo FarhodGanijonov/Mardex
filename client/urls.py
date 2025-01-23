@@ -2,7 +2,7 @@ from django.urls import path
 
 
 
-from .views import OrderListView, OrderDetailView, ClientDetailView
+from .views import OrderListView, OrderDetailView, ClientDetailView, ClientNewsDetailView
 from .views import OrderListView, OrderDetailView, newsclient_list
 
 from .views import (
@@ -33,9 +33,11 @@ urlpatterns = [
 
     path('tarifharid/', TarifHaridiCreateView.as_view(), name='tarif-harid'),
     path('clientnews/', newsclient_list),
+    path('clientnews/<int:pk>/', ClientNewsDetailView.as_view(), name='newsclient-detail'),
     path('clienttariflist/', clienttarif_list),
     path('tarif/', tarif_list),
     path('clients/', ClientListView.as_view(), name='client-list'),
+
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

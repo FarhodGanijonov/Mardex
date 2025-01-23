@@ -274,3 +274,10 @@ class DeleteWorkerImagesView(APIView):
                 status=status.HTTP_200_OK,
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class WorkerNewsDetailView(APIView):
+    def get(self, request, pk):
+        worker_news = get_object_or_404(WorkerNews, pk=pk)
+        serializer = WorkerNewsSerializer(worker_news, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
