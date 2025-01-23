@@ -4,26 +4,23 @@ from rest_framework import generics, status
 from rest_framework.generics import UpdateAPIView, RetrieveAPIView
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import AllowAny, IsAuthenticated  # Foydalanuvchi autentifikatsiyasi
-from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.db.models import Q
 
 from client.models import Order
 from job.models import Job, CategoryJob
 from job.serializer import JobSerializer, CategoryJobSerializer
-from .models import WorkerProfile, ProfilImage, WorkerNews
-from .permissions import IsClient
+from .models import WorkerNews, WorkerImage
 from .serializers import WorkerRegistrationSerializer, WorkerLoginSerializer, \
-    WorkerPasswordChangeSerializer, WorkerSerializer, UserUpdateSerializer, WorkerProfileSerializer, \
-    WorkerImageSerializer, WorkerJobSerializer, WorkerPhoneUpdateSerializer, WorkerNewsSerializer
+    WorkerPasswordChangeSerializer, WorkerSerializer, UserUpdateSerializer, \
+    WorkerImageSerializer, WorkerJobSerializer, WorkerPhoneUpdateSerializer, WorkerNewsSerializer, \
+    WorkerUpdateSerializer, WorkerImageDeleteSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from users.models import AbstractUser
 from django.contrib.auth import get_user_model
 from job.models import City, Region
 from .serializers import CitySerializer, RegionSerializer
-
-
 
 User = get_user_model()
 
@@ -68,6 +65,7 @@ class WorkerLoginView(generics.GenericAPIView):
             "worker": WorkerRegistrationSerializer(worker).data,
         }, status=status.HTTP_200_OK)
 
+
 # parol change class
 class WorkerPasswordChangeView(generics.GenericAPIView):
     serializer_class = WorkerPasswordChangeSerializer
@@ -81,22 +79,6 @@ class WorkerPasswordChangeView(generics.GenericAPIView):
 
     def perform_update(self, serializer):
         serializer.save()
-
-
-# workerlarni barcha malumotlarini olish
-class WorkerDetailView(generics.RetrieveAPIView):
-    serializer_class = WorkerSerializer
-
-    def get_queryset(self):
-        # Faqat 'role=worker' bo'lgan foydalanuvchilarni filtrlash
-        return User.objects.filter(role='worker')
-
-    def get(self, request, *args, **kwargs):
-        worker_id = kwargs.get('id')
-        # Filtrlashdan so'ng foydalanuvchini olish
-        worker = get_object_or_404(self.get_queryset(), id=worker_id)
-        serializer = self.get_serializer(worker)
-        return Response(serializer.data)
 
 
 # category bo'yicha job larni filterlash
@@ -159,73 +141,6 @@ class OrderStatisticsAPIView(APIView):
         })
 
 
-# worker profil uchun views
-class WorkerProfileListView(APIView):
-    permission_classes = [IsAuthenticated, IsClient]
-
-    def get(self, request):
-        location = request.query_params.get('location')
-        if location:
-            workers = WorkerProfile.objects.filter(user__location__icontains=location)
-        else:
-            workers = WorkerProfile.objects.all()
-
-        serializer = WorkerProfileSerializer(workers, many=True)
-        return Response(serializer.data)
-
-
-class WorkerProfileUpdateView(UpdateAPIView):
-    queryset = WorkerProfile.objects.all()
-    serializer_class = WorkerProfileSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_object(self):
-        return self.request.user.worker_profile
-
-
-class AddWorkerImageView(APIView):
-    parser_classes = [MultiPartParser]
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request, profile_id=None):
-        # WorkerProfile ID bo'yicha aniqlash
-        try:
-            profile = WorkerProfile.objects.get(id=profile_id)
-        except WorkerProfile.DoesNotExist:
-            return Response({"error": "Profil topilmadi."}, status=404)
-
-        # Tasvirlarni 5 tadan oshirmaslikni tekshirish
-        if profile.profileimage.count() >= 5:
-            return Response({"error": "5 tadan ortiq tasvir qo'shib bo'lmaydi."}, status=400)
-
-        # Tasvirni saqlash
-        serializer = WorkerImageSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(profile=profile)
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
-
-
-class DeleteWorkerImageView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def delete(self, request, image_id):
-        image = ProfilImage.objects.filter(id=image_id, profile=request.user.worker_profile).first()
-        if image:
-            image.delete()
-            return Response({"message": "Tasvir o'chirildi."}, status=204)
-        return Response({"error": "Tasvir topilmadi."}, status=404)
-
-
-class DeleteAllWorkerImagesView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def delete(self, request):
-        profile = request.user.worker_profile
-        profile.profileimage.all().delete()
-        return Response({"message": "Barcha tasvirlar o'chirildi."}, status=204)
-
-
 class WorkerPhoneUpdateView(generics.GenericAPIView):
     serializer_class = WorkerPhoneUpdateSerializer
     permission_classes = [IsAuthenticated]
@@ -262,7 +177,7 @@ class JobSearchAPIView(APIView):
         query = request.query_params.get('q', '')
 
         if not query:
-            return Response({"error": "Qidiruv so'rovini kiriting (q)"},)
+            return Response({"error": "Qidiruv so'rovini kiriting (q)"}, )
 
         # Harflar bo'yicha qidiruv
         categories = CategoryJob.objects.filter(title__icontains=query)
@@ -276,8 +191,86 @@ class JobSearchAPIView(APIView):
             "jobs": job_serializer.data
         })
 
+
 @api_view(['GET'])
 def workernews_list(request):
     news = WorkerNews.objects.all()
     serializer = WorkerNewsSerializer(news, many=True, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class WorkerProfileListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        # Filter users whose role is 'worker'
+        workers = User.objects.filter(role='worker')
+
+        # Serialize the filtered workers
+        serializer = WorkerUpdateSerializer(workers, many=True, context={'request': request})
+        return Response(serializer.data)
+
+
+class WorkerProfileUpdateView(UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = WorkerUpdateSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+
+class AddWorkerImageView(APIView):
+    parser_classes = [MultiPartParser]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        # Fetching the authenticated user
+        profile = request.user
+
+        # Ensure the user doesn't exceed the 5 image limit
+        if profile.profileimage.count() >= 5:
+            return Response({"error": "5 tadan ortiq tasvir qo'shib bo'lmaydi."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Save the new image
+        serializer = WorkerImageSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=profile)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DeleteWorkerImageView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, image_id):
+        # Deleting an image for the authenticated user
+        image = WorkerImage.objects.filter(id=image_id, user=request.user).first()
+        if image:
+            image.delete()
+            return Response({"message": "Tasvir o'chirildi."}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"error": "Tasvir topilmadi."}, status=status.HTTP_404_NOT_FOUND)
+
+
+class DeleteAllWorkerImagesView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request):
+        # Deleting all images for the authenticated user
+        request.user.profileimage.all().delete()
+        return Response({"message": "Barcha tasvirlar o'chirildi."}, status=status.HTTP_204_NO_CONTENT)
+
+
+class DeleteWorkerImagesView(APIView):
+    permission_classes = [IsAuthenticated]  # Faqat authenticated foydalanuvchilar uchun
+
+    def post(self, request, *args, **kwargs):
+        serializer = WorkerImageDeleteSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            # Rasmlarni o'chirish
+            deleted_images = serializer.delete_images(request.user, serializer.validated_data['image_ids'])
+            return Response(
+                {"message": f"{len(deleted_images)} ta rasm muvaffaqiyatli o'chirildi."},
+                status=status.HTTP_200_OK,
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

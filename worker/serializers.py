@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from users.models import AbstractUser
 from job.models import Job, CategoryJob
-from worker.models import ProfilImage, WorkerProfile, WorkerNews
+from worker.models import WorkerNews, WorkerImage
 from job.models import Region, City
 
 User = get_user_model()
@@ -76,17 +76,31 @@ class WorkerPasswordChangeSerializer(serializers.Serializer):
         return user
 
 
+class WorkerImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WorkerImage
+        fields = ['id', 'image']
+
+
 class WorkerSerializer(serializers.ModelSerializer):
+    images = WorkerImageSerializer(many=True, read_only=True)
+
     class Meta:
         model = User
-        fields = ['avatar', 'description', 'full_name', 'job_category', 'job_id', 'role']
+        fields = ['id', 'full_name', 'description', 'avatar', 'role', 'reyting', 'images', 'job_category', 'job_id']
+
+
+class WorkerUpdateSerializer(serializers.ModelSerializer):
+    images = WorkerImageSerializer(source='profileimage', many=True, read_only=True)
+
+    class Meta:
+        model = User
+        fields = ['id', 'full_name', 'description', 'avatar', 'images', 'role']
 
 
 class UserUpdateSerializer(serializers.ModelSerializer):
-    # Bu yerda job_category va job_id ni ID orqali yangilash mumkin
     job_category = serializers.PrimaryKeyRelatedField(queryset=CategoryJob.objects.all())
-    job_id = serializers.PrimaryKeyRelatedField(queryset=Job.objects.all(),
-                                                many=True)  # job_id - bu ManyToManyField, shuning uchun many=True
+    job_id = serializers.PrimaryKeyRelatedField(queryset=Job.objects.all(), many=True)  # job_id - bu ManyToManyField, shuning uchun many=True
 
     class Meta:
         model = AbstractUser  # Bu serializer AbstractUser modeliga tegishli
@@ -114,20 +128,6 @@ class WorkerJobSerializer(serializers.ModelSerializer):
     class Meta:
         model = AbstractUser
         fields = ['id', 'full_name', 'job_category', 'job_id']
-
-
-class WorkerImageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProfilImage
-        fields = ['id', 'image']
-
-
-class WorkerProfileSerializer(serializers.ModelSerializer):
-    images = WorkerImageSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = WorkerProfile
-        fields = ['id', 'fullname', 'description', 'avatar', 'reyting', 'images']
 
 
 class WorkerPhoneUpdateSerializer(serializers.Serializer):
@@ -164,7 +164,7 @@ class CitySerializer(serializers.ModelSerializer):
 class RegionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Region
-        fields = ['id', 'title',]  # Kerakli maydonlarni kiriting
+        fields = ['id', 'title', ]  # Kerakli maydonlarni kiriting
 
 
 class WorkerNewsSerializer(serializers.ModelSerializer):
@@ -173,3 +173,26 @@ class WorkerNewsSerializer(serializers.ModelSerializer):
     class Meta:
         model = WorkerNews
         fields = ['id', 'description', 'image', 'created_at']
+
+
+class WorkerImageDeleteSerializer(serializers.Serializer):
+    image_ids = serializers.ListField(
+        child=serializers.IntegerField(),
+        write_only=True,
+        help_text="WorkerImage modelidagi rasmlarning id-larini yuboring",
+    )
+
+    def validate_image_ids(self, image_ids):
+        # Foydalanuvchiga tegishli bo'lmagan id-larni bloklash
+        user = self.context['request'].user
+        invalid_ids = WorkerImage.objects.filter(id__in=image_ids).exclude(user=user).values_list('id', flat=True)
+        if invalid_ids:
+            raise serializers.ValidationError(
+                f"Quyidagi rasmlar id-lari sizga tegishli emas: {list(invalid_ids)}"
+            )
+        return image_ids
+
+    def delete_images(self, user, image_ids):
+        # Ruxsat bo'lgan rasmlarni o'chirish
+        WorkerImage.objects.filter(id__in=image_ids, user=user).delete()
+        return image_ids

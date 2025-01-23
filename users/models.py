@@ -1,4 +1,6 @@
 import os
+
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
@@ -70,6 +72,13 @@ class AbstractUser(AbstractBaseUser, PermissionsMixin):
 
     avatar = models.ImageField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
+    reyting = models.FloatField(
+        validators=[
+            MinValueValidator(0.0),
+            MaxValueValidator(100.0)
+        ],
+        default=0.0
+    )
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)

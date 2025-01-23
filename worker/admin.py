@@ -1,18 +1,20 @@
 from django.contrib import admin
+from worker.models import WorkerNews, WorkerImage
+from django.contrib.auth import get_user_model
 
-from worker.models import WorkerProfile, ProfilImage, WorkerNews
+User = get_user_model()
 
 
-class ProfilImageInline(admin.TabularInline):
-    model = ProfilImage
+class WorkerImageInline(admin.TabularInline):
+    model = WorkerImage
     extra = 1
 
 
-@admin.register(WorkerProfile)
+@admin.register(User)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ['id', 'fullname', 'description', 'avatar', 'reyting']
-    fields = ['fullname_uz', 'fullname_ru', 'fullname_en', 'description_uz', 'description_ru', 'description_en']
-    inlines = [ProfilImageInline]
+    list_display = ['id', 'full_name', 'description', 'avatar', 'reyting']
+    fields = ['full_name_uz', 'full_name_ru', 'full_name_en', 'description_uz', 'description_ru', 'description_en']
+    inlines = [WorkerImageInline]
 
 
 @admin.register(WorkerNews)

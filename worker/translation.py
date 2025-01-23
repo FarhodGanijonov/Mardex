@@ -1,11 +1,13 @@
 from modeltranslation.translator import TranslationOptions, register
+from .models import WorkerNews
+from django.contrib.auth import get_user_model
 
-from .models import WorkerProfile, WorkerNews
+User = get_user_model()
 
 
-@register(WorkerProfile)
+@register(User)
 class WorkerProfileTranslationOptions(TranslationOptions):
-    fields = ('fullname', 'description')
+    fields = ('full_name', 'description')
 
 
 @register(WorkerNews)

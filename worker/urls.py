@@ -1,7 +1,7 @@
 from django.urls import path
-from .views import WorkerRegistrationView, WorkerLoginView, WorkerPasswordChangeView, WorkerDetailView, \
+from .views import WorkerRegistrationView, WorkerLoginView, WorkerPasswordChangeView, \
     JobListByCategoryView, categoryjob_list, UpdateUserJobView, OrderStatisticsAPIView, \
-    WorkerProfileUpdateView, AddWorkerImageView, DeleteWorkerImageView, WorkerProfileListView
+    WorkerProfileUpdateView, AddWorkerImageView, DeleteWorkerImageView, WorkerProfileListView, DeleteWorkerImagesView
 from .views import (RegionListByCityView, DeleteAllWorkerImagesView, WorkerJobListView,
                     WorkerPhoneUpdateView, JobSearchAPIView, workernews_list)
 
@@ -10,9 +10,6 @@ urlpatterns = [
     path('register/', WorkerRegistrationView.as_view(), name='worker-register'),
     path('login/', WorkerLoginView.as_view(), name='worker-login'),
     path('password-change/', WorkerPasswordChangeView.as_view(), name='worker-password-change'),
-
-    path('worker/<int:id>/', WorkerDetailView.as_view(), name='worker-detail'),
-
     # path('websocket/', websocket_test, name='websocket_test'),
 
     path('categoryjob_list/', categoryjob_list, name='categoryjob_list'),
@@ -25,21 +22,26 @@ urlpatterns = [
     # worker profil uchun statistika yani atmen qilingan joblar soni
     path('order-statistics/', OrderStatisticsAPIView.as_view(), name='order-statistics'),
 
-    # worker profile uchun viewset desa ham bo'ladi.
-    path('worker-profiles/', WorkerProfileListView.as_view(), name='list-worker-profiles'),
-    path('worker-profiles/<int:profile_id>/images/add/', AddWorkerImageView.as_view(), name='add-worker-image'),
-    path('worker-profiles/images/delete/<int:image_id>/', DeleteWorkerImageView.as_view(), name='delete-worker-image'),
-    path('worker-profiles/images/delete/all/', DeleteAllWorkerImagesView.as_view(), name='delete-all-worker-images'),
-    path('worker-profiles/<int:pk>/update/', WorkerProfileUpdateView.as_view(), name='update-worker-profile'),
-
-
     path('api/worker/update-phone/', WorkerPhoneUpdateView.as_view(), name='worker-update-phone'),
 
     path('api/city/<int:pk>/', RegionListByCityView.as_view(), name='region-list-by-city'),
 
 
     path('worker-job-search/', JobSearchAPIView.as_view(), name='job-search'),
-    path('workernews/', workernews_list)
+    path('workernews/', workernews_list),
 
+
+
+    path('workers/', WorkerProfileListView.as_view(), name='worker-profile-list'),
+    # Update Worker Profile
+    path('workers/profile/update/', WorkerProfileUpdateView.as_view(), name='worker-profile-update'),
+    # Add Worker Image
+    path('workers/profile/add-image/', AddWorkerImageView.as_view(), name='add-worker-image'),
+    # Delete Worker Image
+    path('workers/profile/delete-image/<int:image_id>/', DeleteWorkerImageView.as_view(), name='delete-worker-image'),
+    # Delete All Worker Images
+    path('workers/profile/delete-all-images/', DeleteAllWorkerImagesView.as_view(), name='delete-all-worker-images'),
+
+    path('delete-images/', DeleteWorkerImagesView.as_view(), name='delete-images'),
 
 ]
