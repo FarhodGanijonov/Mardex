@@ -62,16 +62,21 @@ def region_list(request):
     return Response(serializer.data)
 
 
-@api_view(['GET'])
-def region_in_city(request, pk):
-    try:
-        city = City.objects.get(id=pk)  # Shaharning mavjudligini tekshirish
-    except City.DoesNotExist:
-        raise NotFound(detail="Shahar topilmadi.")  # Xato xabarini yuborish
+class RegionListByCityView(APIView):
 
-    # city_id ni ishlatish kerak bo'lsa
-    regions = Region.objects.filter(city_id=city.id)  # Shaharga bog'liq mintaqalarni olish
-    serializer = RegionSerializer(regions, many=True, context={'request': request})
-    return Response(serializer.data)
+    def get(self, request, pk):
+        # Shaharning `id`si bo‘yicha City modelini topamiz
+        city = get_object_or_404(City, id=pk)
 
+        # Ushbu shaharga tegishli Regionlarni olish
+        regions = Region.objects.filter(city_id=city)
 
+        # Serializerlar bilan ma'lumotlarni formatlaymiz
+        city_serializer = CitySerializer(city, context={'request': request})
+        regions_serializer = RegionSerializer(regions, many=True, context={'request': request})
+
+        # Natijani birlashtirib qaytaramiz
+        result = city_serializer.data
+        result['regions'] = regions_serializer.data
+
+        return Response(result)

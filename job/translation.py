@@ -11,15 +11,3 @@ class CategoryJobTranslationOptions(TranslationOptions):
 @register(Job)
 class JobTranslationOptions(TranslationOptions):
     fields = ('title',)
-
-
-@register(City)
-class CityTranslationOptions(TranslationOptions):
-    fields = ('title',)
-
-
-@register(Region)
-class RegionTranslationOptions(TranslationOptions):
-    fields = ('title',)
-
-

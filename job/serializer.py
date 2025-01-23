@@ -18,15 +18,16 @@ class CategoryJobSerializer(serializers.ModelSerializer):
         fields = ['id', 'title_uz', 'title_ru', 'title_en', 'image', 'created_at', 'jobs']
 
 
-class CitySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = City
-        fields = ['id', 'title_uz', 'title_ru', 'title_en',]
-
-
 class RegionSerializer(serializers.ModelSerializer):
-    city_id = CitySerializer()
-
     class Meta:
         model = Region
-        fields = ['id', 'title_uz', 'title_ru', 'title_en', 'city_id']
+        fields = ['id', 'title', ]
+
+
+class CitySerializer(serializers.ModelSerializer):
+    regions = RegionSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = City
+        fields = ['id', 'title', 'regions']
+

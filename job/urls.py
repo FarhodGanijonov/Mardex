@@ -10,5 +10,5 @@ urlpatterns = [
     path('city/', views.city_list, name='city_list'),  # Shahar ro'yxati
     path('city/count/', views.city_count, name='city_count'),  # Shaharlar soni
     path('regions/', views.region_list, name='region_list'),  # Regionlar ro'yxati
-    path('regions/<int:pk>/in_city/', views.region_in_city, name='region_in_city'),  # Regionlarni shaharga qarab filtrlaydi
+    path('regions/<int:pk>/in_city/', views.RegionListByCityView.as_view(), name='region_in_city'),  # Regionlarni shaharga qarab filtrlaydi
 ]
