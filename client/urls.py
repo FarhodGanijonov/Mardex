@@ -2,7 +2,7 @@ from django.urls import path
 
 
 
-from .views import OrderListView, OrderDetailView, ClientDetailView, ClientNewsDetailView
+from .views import OrderListView, OrderDetailView, ClientDetailView, ClientNewsDetailView, OrderCreateView
 from .views import OrderListView, OrderDetailView, newsclient_list
 
 from .views import (
@@ -23,6 +23,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
+    path('orderscreate/', OrderCreateView.as_view(), name='order-create'),
     path('orders/', OrderListView.as_view(), name='order-list'),
     path('orders/<int:pk>/', OrderDetailView.as_view(), name='order-detail'),
     path('clientnews/', newsclient_list),

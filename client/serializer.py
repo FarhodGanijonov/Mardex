@@ -1,10 +1,9 @@
+from django.db import IntegrityError
 from rest_framework import serializers
-
-from .models import Order, ClientNews
 from django.contrib.auth import get_user_model
 User = get_user_model()
-
-
+from users.models import AbstractUser
+from .models import ClientReyting
 from .models import Order, ClientNews, ClientTarif, TarifHaridi
 from django.contrib.auth import get_user_model
 User = get_user_model()
@@ -16,7 +15,7 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = [
             'id', 'worker', 'accepted_workers', 'client', 'job_category', 'job_id',
-            'region', 'city', 'price', 'desc', 'full_desc', 'image', 'work_count',
+            'region', 'city', 'price', 'desc', 'full_desc', 'image', 'worker_count',
             'is_finish', 'gender', 'view_count', 'status', 'created_at',
             'latitude', 'longitude'
         ]
@@ -56,6 +55,7 @@ class ClientRegistrationSerializer(serializers.ModelSerializer):
 class ClientLoginSerializer(serializers.Serializer):
     phone = serializers.CharField()
     password = serializers.CharField(write_only=True)
+    tarif = serializers.SerializerMethodField()
 
     def validate(self, data):
         phone = data.get("phone")
@@ -63,9 +63,36 @@ class ClientLoginSerializer(serializers.Serializer):
         client = User.objects.filter(phone=phone).first()
 
         if client and client.check_password(password):
+            # 0 so‘mlik tarif faqat mavjud bo‘lmasa, ulash
+            self.ensure_default_tarif(client)
             return client
         else:
             raise serializers.ValidationError("Invalid phone or password")
+
+    def get_tarif(self, obj):
+        tarif_haridi = TarifHaridi.objects.filter(user=obj, status=True).first()
+        if tarif_haridi:
+            tarif = tarif_haridi.tarif_id
+            return {
+                "id": tarif.id,
+                "name": tarif.name,
+                "price": tarif.price,
+                "top_limit": tarif.top_limit,
+                "call_limit": tarif.call_limit,
+            }
+        return None
+
+    def ensure_default_tarif(self, user):
+        """
+        Foydalanuvchi uchun faqat bitta tarif yozuvini yaratadi yoki mavjudini ishlatadi.
+        """
+        default_tarif = ClientTarif.objects.filter(price=0).first()
+        if default_tarif:
+            TarifHaridi.objects.get_or_create(
+                user=user,
+                tarif_id=default_tarif,
+                defaults={"status": True}  # Agar yangi yozuv yaratilsa, status=True o‘rnatiladi
+            )
 
 
 class ClientPasswordChangeSerializer(serializers.Serializer):
@@ -90,9 +117,6 @@ class ClientPasswordChangeSerializer(serializers.Serializer):
         user.save()
         return user
 
-from users.models import AbstractUser
-from .models import ClientReyting
-
 
 class ClientDetailSerializer(serializers.ModelSerializer):
     class Meta:
@@ -113,8 +137,6 @@ class ClientNewsSerializer(serializers.ModelSerializer):
     class Meta:
         model = ClientNews
         fields = ['id', 'description', 'image', 'created_at',]
-
-
 
 
 class ClientTarifSerializer(serializers.ModelSerializer):

@@ -29,7 +29,7 @@ class Order(models.Model):
     desc = models.TextField(default="", blank=True, null=True)
     full_desc = models.TextField(default="", blank=True, null=True)
     image = models.ImageField(upload_to='client_image/', blank=True, null=True)
-    work_count = models.IntegerField(default=1)
+    worker_count = models.IntegerField(default=1)
     is_finish = models.BooleanField(default=False)
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='Male')
     view_count = models.IntegerField(default=0)

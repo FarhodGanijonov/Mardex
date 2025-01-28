@@ -1,58 +1,40 @@
-
-from rest_framework.decorators import api_view
-from .models import Order, ClientNews
-from .serializer import OrderSerializer, ClientNewsSerializer, ClientDetailSerializer
+from .models import Order, ClientNews, ClientTarif, TarifHaridi
+from .serializer import (
+    OrderSerializer, ClientNewsSerializer, ClientDetailSerializer, ClientTarifSerializer,
+    TarifHaridiSerializer, ClientRegistrationSerializer, ClientLoginSerializer,
+    ClientPasswordChangeSerializer,
+)
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
-from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
-
-from .models import Order, ClientNews, ClientTarif, TarifHaridi
 from job.models import Job, CategoryJob
-from .serializer import (
-    OrderSerializer,
-    ClientNewsSerializer,
-    ClientTarifSerializer,
-    TarifHaridiSerializer,
-    ClientRegistrationSerializer,
-    ClientLoginSerializer,
-    ClientPasswordChangeSerializer,
-)
 from job.serializer import CategoryJobSerializer, JobSerializer
 
 User = get_user_model()
 
-### Order Viewlar
+### Order Views
+
+class OrderCreateView(generics.CreateAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+
 
 class OrderListView(generics.ListAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
 
-class OrderListView(APIView):
-    def get(self, request):
-        orders = Order.objects.all()
-        serializer = OrderSerializer(orders, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-class OrderDetailView(APIView):
-    def get(self, request, pk):
-        order = get_object_or_404(Order, pk=pk)
-        serializer = OrderSerializer(order)
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class OrderDetailView(generics.RetrieveAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
 
-### Job Viewlar
 
-
+### Job Views
 
 class JobListByCategoryView(APIView):
     def get(self, request, pk):
@@ -73,8 +55,8 @@ def categoryjob_list(request):
     serializer = CategoryJobSerializer(category_jobs, many=True, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
 
-### Client Viewlar
 
+### Client Views
 
 class ClientRegistrationView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -86,7 +68,7 @@ class ClientRegistrationView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         client = serializer.save()
 
-        # Foydalanuvchiga avtomatik 0 so'mlik tarifni bog'lash
+        # Assign default tariff
         self.assign_default_tarif(client)
 
         refresh = RefreshToken.for_user(client)
@@ -100,6 +82,7 @@ class ClientRegistrationView(generics.CreateAPIView):
         if default_tarif:
             TarifHaridi.objects.get_or_create(user=user, tarif_id=default_tarif)
 
+
 class ClientLoginView(generics.GenericAPIView):
     serializer_class = ClientLoginSerializer
     permission_classes = [AllowAny]
@@ -109,13 +92,52 @@ class ClientLoginView(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
         client = serializer.validated_data
 
+        # Foydalanuvchining aktiv tarifini olish yoki 0 so‘mlik tarifni ulash
+        tarif_info = self.get_or_assign_tarif(client)
+
         refresh = RefreshToken.for_user(client)
         return Response({
             "refresh": str(refresh),
             "access": str(refresh.access_token),
             "client": ClientRegistrationSerializer(client).data,
+            "tarif": tarif_info,
         }, status=status.HTTP_200_OK)
 
+    def get_or_assign_tarif(self, user):
+        """
+        Foydalanuvchining aktiv tarifini olish yoki unga 0 so‘mlik tarifni ulash.
+        """
+        # Foydalanuvchining aktiv tarifini tekshirish
+        tarif_haridi = TarifHaridi.objects.filter(user=user, status=True).first()
+        if tarif_haridi:
+            tarif = tarif_haridi.tarif_id
+        else:
+            # 0 so‘mlik tarifni olish
+            default_tarif = ClientTarif.objects.filter(price=0).first()
+            if not default_tarif:
+                return None  # Agar 0 so‘mlik tarif bo‘lmasa, `None` qaytaramiz
+
+            # 0 so‘mlik tarifni foydalanuvchiga bog‘lash
+            tarif_haridi, created = TarifHaridi.objects.get_or_create(
+                user=user,
+                tarif_id=default_tarif,
+                defaults={"status": True}
+            )
+
+            # Agar yozuv avval mavjud bo‘lsa, statusni yangilaymiz
+            if not created:
+                tarif_haridi.status = True
+                tarif_haridi.save()
+
+            tarif = tarif_haridi.tarif_id
+
+        return {
+            "id": tarif.id,
+            "name": tarif.name,
+            "price": tarif.price,
+            "top_limit": tarif.top_limit,
+            "call_limit": tarif.call_limit,
+        }
 
 class ClientPasswordChangeView(generics.GenericAPIView):
     serializer_class = ClientPasswordChangeSerializer
@@ -129,7 +151,6 @@ class ClientPasswordChangeView(generics.GenericAPIView):
 
     def perform_update(self, serializer):
         serializer.save()
-
 
 
 class ClientDetailView(APIView):
@@ -149,8 +170,12 @@ class ClientDetailView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-### News Viewlar
+class ClientListView(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = ClientRegistrationSerializer
 
+
+### News Views
 
 @api_view(['GET'])
 def newsclient_list(request):
@@ -158,7 +183,15 @@ def newsclient_list(request):
     serializer = ClientNewsSerializer(news, many=True, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
 
-### Tarif Viewlar
+
+class ClientNewsDetailView(APIView):
+    def get(self, request, pk):
+        client_news = get_object_or_404(ClientNews, pk=pk)
+        serializer = ClientNewsSerializer(client_news, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+### Tariff Views
 
 class TarifHaridiCreateView(generics.CreateAPIView):
     queryset = TarifHaridi.objects.all()
@@ -167,12 +200,10 @@ class TarifHaridiCreateView(generics.CreateAPIView):
 
 @api_view(['GET'])
 def clienttarif_list(request):
-    # Foydalanuvchini tekshirish
     if not request.user.is_authenticated:
         return Response({"detail": "Authentication credentials were not provided."},
                         status=status.HTTP_401_UNAUTHORIZED)
 
-    # Tizimga kirgan foydalanuvchining tariflarini olish
     tarif = TarifHaridi.objects.filter(user=request.user)
     serializer = TarifHaridiSerializer(tarif, many=True, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
@@ -183,15 +214,3 @@ def tarif_list(request):
     clienttarif = ClientTarif.objects.all()
     serializer = ClientTarifSerializer(clienttarif, many=True, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-class ClientListView(generics.ListAPIView):
-    queryset = User.objects.all()
-    serializer_class = ClientRegistrationSerializer
-
-
-class ClientNewsDetailView(APIView):
-    def get(self, request, pk):
-        client_news = get_object_or_404(ClientNews, pk=pk)
-        serializer = ClientNewsSerializer(client_news, context={'request': request})
-        return Response(serializer.data, status=status.HTTP_200_OK)
