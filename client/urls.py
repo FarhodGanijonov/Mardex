@@ -1,9 +1,5 @@
 from django.urls import path
-
-
-
-from .views import OrderListView, OrderDetailView, ClientDetailView, ClientNewsDetailView, OrderCreateView
-from .views import OrderListView, OrderDetailView, newsclient_list
+from .views import ClientDetailView, ClientNewsDetailView, OrderCreateView
 
 from .views import (
     OrderListView,

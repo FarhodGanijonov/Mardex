@@ -199,15 +199,12 @@ def workernews_list(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class WorkerProfileListView(APIView):
+class WorkerProfileDetailView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        # Filter users whose role is 'worker'
-        workers = User.objects.filter(role='worker')
-
-        # Serialize the filtered workers
-        serializer = WorkerUpdateSerializer(workers, many=True, context={'request': request})
+        worker = request.user
+        serializer = WorkerUpdateSerializer(worker, context={'request': request})
         return Response(serializer.data)
 
 
