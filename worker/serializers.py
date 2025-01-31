@@ -95,7 +95,7 @@ class WorkerUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'full_name', 'description', 'avatar', 'images', 'role']
+        fields = ['id', 'full_name', 'description', 'phone', 'avatar', 'images', 'role']
 
 
 class UserUpdateSerializer(serializers.ModelSerializer):

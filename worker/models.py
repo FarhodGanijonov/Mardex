@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-
+# worker profilidagi inline bo'lgan image lar uchun model
 class WorkerImage(models.Model):
     user = models.ForeignKey(
         User,
@@ -25,6 +25,7 @@ class WorkerImage(models.Model):
         super().save(*args, **kwargs)
 
 
+# workerlar profilidagi nesw uchun model
 class WorkerNews(models.Model):
     description = models.TextField()
     image = models.ImageField(upload_to='workernews_images/', null=True, blank=True)

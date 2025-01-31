@@ -12,7 +12,7 @@ from job.models import Job, CategoryJob
 from job.serializer import JobSerializer, CategoryJobSerializer
 from .models import WorkerNews, WorkerImage
 from .serializers import WorkerRegistrationSerializer, WorkerLoginSerializer, \
-    WorkerPasswordChangeSerializer, WorkerSerializer, UserUpdateSerializer, \
+    WorkerPasswordChangeSerializer, UserUpdateSerializer, \
     WorkerImageSerializer, WorkerJobSerializer, WorkerPhoneUpdateSerializer, WorkerNewsSerializer, \
     WorkerUpdateSerializer, WorkerImageDeleteSerializer
 from rest_framework.views import APIView
@@ -141,6 +141,7 @@ class OrderStatisticsAPIView(APIView):
         })
 
 
+# workerlar har biri o'zini telefon raqamini update qilishshi uchun views
 class WorkerPhoneUpdateView(generics.GenericAPIView):
     serializer_class = WorkerPhoneUpdateSerializer
     permission_classes = [IsAuthenticated]
@@ -152,6 +153,7 @@ class WorkerPhoneUpdateView(generics.GenericAPIView):
         return Response({"message": "Phone number updated successfully."}, status=status.HTTP_200_OK)
 
 
+# shaharga tegishli regionlarni filter qilamiz shu url orqali
 class RegionListByCityView(APIView):
 
     def get(self, request, pk):
@@ -172,6 +174,7 @@ class RegionListByCityView(APIView):
         return Response(result)
 
 
+# category va job ichidan search qiladi
 class JobSearchAPIView(APIView):
     def get(self, request):
         query = request.query_params.get('q', '')
@@ -199,6 +202,7 @@ def workernews_list(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+# har bir worker o'zini profilini get qiladi token bilan farqlanadi
 class WorkerProfileDetailView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -208,6 +212,7 @@ class WorkerProfileDetailView(APIView):
         return Response(serializer.data)
 
 
+# har bir worker o'zini profilini malumotlarini update qilishi uchun
 class WorkerProfileUpdateView(UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = WorkerUpdateSerializer
@@ -217,6 +222,7 @@ class WorkerProfileUpdateView(UpdateAPIView):
         return self.request.user
 
 
+# har bir worker o'zini profili uchun 5 tagacha rasm qo'shishi uchun
 class AddWorkerImageView(APIView):
     parser_classes = [MultiPartParser]
     permission_classes = [IsAuthenticated]
@@ -258,8 +264,9 @@ class DeleteAllWorkerImagesView(APIView):
         return Response({"message": "Barcha tasvirlar o'chirildi."}, status=status.HTTP_204_NO_CONTENT)
 
 
+# har bir worker o'zini profilidagi 5 ta gacha qo'shadigan rasmlarini hohlaganini tanlab delete qiladi
 class DeleteWorkerImagesView(APIView):
-    permission_classes = [IsAuthenticated]  # Faqat authenticated foydalanuvchilar uchun
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         serializer = WorkerImageDeleteSerializer(data=request.data, context={'request': request})
