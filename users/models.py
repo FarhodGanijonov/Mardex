@@ -57,8 +57,8 @@ class AbstractUser(AbstractBaseUser, PermissionsMixin):
     role = models.CharField(max_length=50, choices=ROLE_CHOICES)
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
 
-    full_name = models.CharField(max_length=255)
-    phone = models.CharField(max_length=15, unique=True)
+    full_name = models.CharField(max_length=255, blank=True, null=True)
+    phone = models.CharField(max_length=15, unique=True, blank=True, null=True)
     region = models.ForeignKey(Region, on_delete=models.SET_NULL, blank=True, null=True)
     city = models.ForeignKey(City, on_delete=models.SET_NULL, blank=True, null=True)
     # location = models.JSONField(geography=True, blank=True, null=True)
