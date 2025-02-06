@@ -162,3 +162,7 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),  # Access tokenning amal qilish muddati
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),  # Refresh tokenning amal qilish muddati
 }
+
+
+FILE_UPLOAD_MAX_MEMORY_SIZE = 52428800  # 50 MB (baytlarda)
+DATA_UPLOAD_MAX_MEMORY_SIZE = 52428800  # 50 MB
