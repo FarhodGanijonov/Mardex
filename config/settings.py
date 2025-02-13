@@ -13,6 +13,7 @@ import os
 from datetime import timedelta
 from pathlib import Path
 from django.utils.translation import gettext_lazy as _
+from corsheaders.defaults import default_headers
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -47,6 +48,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'drf_yasg',
+    "corsheaders",
 
     'client.apps.ClientConfig',
     'worker.apps.WorkerConfig',
@@ -64,6 +66,7 @@ REST_FRAMEWORK = {
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -168,3 +171,15 @@ SIMPLE_JWT = {
 
 FILE_UPLOAD_MAX_MEMORY_SIZE = 52428800  # 50 MB (baytlarda)
 DATA_UPLOAD_MAX_MEMORY_SIZE = 52428800  # 50 MB
+
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://mardex.uzfati.uz/',
+]
+
+
+CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'language-code',
+]
