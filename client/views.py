@@ -8,9 +8,19 @@ from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
+
+from rest_framework.generics import UpdateAPIView, RetrieveAPIView
+from rest_framework.parsers import MultiPartParser
+from rest_framework.permissions import AllowAny, IsAuthenticated  # Foydalanuvchi autentifikatsiyasi
+from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import RefreshToken
+from .serializer import (ClientRegistrationSerializer, ClientLoginSerializer, ClientPasswordChangeSerializer,
+                         ClientDetailSerializer)
+
 from django.contrib.auth import get_user_model
 from job.models import Job, CategoryJob
 from job.serializer import CategoryJobSerializer, JobSerializer
@@ -154,6 +164,7 @@ class ClientPasswordChangeView(generics.GenericAPIView):
         serializer.save()
 
 
+
 class ClientDetailView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -226,3 +237,13 @@ class ClientPhoneUpdateView(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"message": "Phone number updated successfully."}, status=status.HTTP_200_OK)
+
+
+class ClientProfileView(APIView):
+    def get(self, request):
+        if request.user.is_authenticated:
+            serializer = ClientDetailSerializer(request.user)
+            return Response(serializer.data)
+        else:
+            return Response({"detail": "Foydalanuvchi tizimga kirmagan"}, status=401)
+

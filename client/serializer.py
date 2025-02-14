@@ -2,7 +2,10 @@ from rest_framework import serializers
 from users.models import AbstractUser
 from .models import ClientReyting
 from .models import Order, ClientNews, ClientTarif, TarifHaridi
+
+from rest_framework import serializers
 from django.contrib.auth import get_user_model
+
 User = get_user_model()
 
 
@@ -117,6 +120,7 @@ class ClientPasswordChangeSerializer(serializers.Serializer):
 
 class ClientDetailSerializer(serializers.ModelSerializer):
     class Meta:
+
         model = AbstractUser
         fields = ['id', 'phone', 'full_name', 'avatar', 'description']
 

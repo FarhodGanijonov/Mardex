@@ -2,6 +2,9 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from job.models import CategoryJob, Job, Region, City
 from users.models import AbstractUser
+from django.contrib.auth import get_user_model
+from django.core.validators import MinValueValidator, MaxValueValidator
+User = get_user_model()
 
 
 class Order(models.Model):
@@ -44,6 +47,7 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order {self.client} by {self.worker}"
+
 
 
 class ClientReyting(models.Model):

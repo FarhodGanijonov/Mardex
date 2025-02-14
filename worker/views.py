@@ -8,6 +8,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.db.models import Q
 
 from client.models import Order
+from client.serializer import WorkerProfileSerializer
 from job.models import Job, CategoryJob
 from job.serializer import JobSerializer, CategoryJobSerializer
 from .models import WorkerNews, WorkerImage

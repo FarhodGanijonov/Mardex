@@ -1,4 +1,5 @@
 from django.urls import path
+
 from .views import ClientDetailView, ClientNewsDetailView, OrderCreateView
 
 from .views import (
@@ -19,6 +20,9 @@ from .views import (
 from django.conf import settings
 from django.conf.urls.static import static
 
+from .views import ClientRegistrationView, ClientLoginView, ClientPasswordChangeView, ClientProfileView
+
+
 urlpatterns = [
     path('orderscreate/', OrderCreateView.as_view(), name='order-create'),
     path('orders/', OrderListView.as_view(), name='order-list'),
@@ -27,6 +31,7 @@ urlpatterns = [
     path('register/', ClientRegistrationView.as_view(), name='client-register'),
     path('login/', ClientLoginView.as_view(), name='client-login'),
     path('password-change/', ClientPasswordChangeView.as_view(), name='client-password-change'),
+
     path('api/client/update-phone/', ClientPhoneUpdateView.as_view(), name='client-update-phone'),
     path('profiles/', ClientDetailView.as_view(), name='client-detail'),
 
@@ -40,3 +45,7 @@ urlpatterns = [
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+    path('profile/', ClientProfileView.as_view(), name='client-profile'),
+
+
