@@ -13,7 +13,8 @@ from .views import (
     ClientPasswordChangeView,
     clienttarif_list,
     tarif_list,
-    ClientListView
+    ClientListView,
+    ClientPhoneUpdateView,
 )
 from django.conf import settings
 from django.conf.urls.static import static
@@ -26,6 +27,7 @@ urlpatterns = [
     path('register/', ClientRegistrationView.as_view(), name='client-register'),
     path('login/', ClientLoginView.as_view(), name='client-login'),
     path('password-change/', ClientPasswordChangeView.as_view(), name='client-password-change'),
+    path('api/client/update-phone/', ClientPhoneUpdateView.as_view(), name='client-update-phone'),
     path('profiles/', ClientDetailView.as_view(), name='client-detail'),
 
     path('tarifharid/', TarifHaridiCreateView.as_view(), name='tarif-harid'),

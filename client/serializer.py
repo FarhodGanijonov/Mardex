@@ -149,3 +149,27 @@ class TarifHaridiSerializer(serializers.ModelSerializer):
         model = TarifHaridi
         fields = ['id', 'user', 'tarif_id', 'status',]
 
+
+class ClientPhoneUpdateSerializer(serializers.Serializer):
+    old_password = serializers.CharField(write_only=True)
+    new_phone = serializers.CharField()
+
+    def validate_old_password(self, value):
+        user = self.context['request'].user
+        if not user.check_password(value):
+            raise serializers.ValidationError("Old password is incorrect.")
+        return value
+
+    def validate_new_phone(self, value):
+        if User.objects.filter(phone=value).exists():
+            raise serializers.ValidationError("This phone number is already in use.")
+        return value
+
+    def save(self, **kwargs):
+        user = self.context['request'].user
+        if user.role != 'client':
+            raise serializers.ValidationError("Only workers can update their phone number.")
+        new_phone = self.validated_data['new_phone']
+        user.phone = new_phone
+        user.save()
+        return user

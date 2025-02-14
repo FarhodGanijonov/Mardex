@@ -2,7 +2,7 @@ from .models import Order, ClientNews, ClientTarif, TarifHaridi
 from .serializer import (
     OrderSerializer, ClientNewsSerializer, ClientDetailSerializer, ClientTarifSerializer,
     TarifHaridiSerializer, ClientRegistrationSerializer, ClientLoginSerializer,
-    ClientPasswordChangeSerializer,
+    ClientPasswordChangeSerializer, ClientPhoneUpdateSerializer
 )
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
@@ -215,3 +215,14 @@ def tarif_list(request):
     clienttarif = ClientTarif.objects.all()
     serializer = ClientTarifSerializer(clienttarif, many=True, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ClientPhoneUpdateView(generics.GenericAPIView):
+    serializer_class = ClientPhoneUpdateSerializer
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({"message": "Phone number updated successfully."}, status=status.HTTP_200_OK)
