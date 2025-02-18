@@ -1,5 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
+
+from job.serializer import CategoryJobSerializer, JobSerializer
 from users.models import AbstractUser
 from job.models import Job, CategoryJob
 from worker.models import WorkerNews, WorkerImage
@@ -100,7 +102,8 @@ class WorkerUpdateSerializer(serializers.ModelSerializer):
 
 class UserUpdateSerializer(serializers.ModelSerializer):
     job_category = serializers.PrimaryKeyRelatedField(queryset=CategoryJob.objects.all())
-    job_id = serializers.PrimaryKeyRelatedField(queryset=Job.objects.all(), many=True)  # job_id - bu ManyToManyField, shuning uchun many=True
+    job_id = serializers.PrimaryKeyRelatedField(queryset=Job.objects.all(),
+                                                many=True)  # job_id - bu ManyToManyField, shuning uchun many=True
 
     class Meta:
         model = AbstractUser  # Bu serializer AbstractUser modeliga tegishli
@@ -121,9 +124,21 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         return instance
 
 
+class JobCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CategoryJob
+        fields = ['id']
+
+
+class JobSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Job
+        fields = ['id', 'title']
+
+
 class WorkerJobSerializer(serializers.ModelSerializer):
-    job_category = serializers.StringRelatedField()  # Kategoriyani matn sifatida qaytaradi
-    job_id = serializers.StringRelatedField(many=True)  # Ko'p ishlari (ManyToManyField) matn sifatida
+    job_category = JobCategorySerializer()  # `job_category`ni ID va nom bilan olish
+    job_id = JobSerializer(many=True)  # `job_id` ManyToManyField bo‘lgani uchun ko‘plikda
 
     class Meta:
         model = AbstractUser
