@@ -1,7 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from job.serializer import CategoryJobSerializer, JobSerializer
 from users.models import AbstractUser
 from job.models import Job, CategoryJob
 from worker.models import WorkerNews, WorkerImage
