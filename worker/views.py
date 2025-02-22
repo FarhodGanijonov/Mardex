@@ -8,7 +8,6 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.db.models import Q
 
 from client.models import Order
-from client.serializer import WorkerProfileSerializer
 from job.models import Job, CategoryJob
 from job.serializer import JobSerializer, CategoryJobSerializer
 from .models import WorkerNews, WorkerImage
@@ -24,10 +23,6 @@ from job.models import City, Region
 from .serializers import CitySerializer, RegionSerializer
 
 User = get_user_model()
-
-
-# def websocket_test(request):
-#     return render(request, 'web.html')
 
 # registratsiya qismi class
 class WorkerRegistrationView(generics.CreateAPIView):

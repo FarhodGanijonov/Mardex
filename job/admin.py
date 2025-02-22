@@ -22,14 +22,14 @@ class JobAdmin(admin.ModelAdmin):
 class CityAdmin(admin.ModelAdmin):
     list_display = ('title',)
     search_fields = ('title',)
-    fields = ['title' 'regions']
+    field = ['title' 'regions']
 
 
 @admin.register(Region)
 class RegionAdmin(admin.ModelAdmin):
     list_display = ('title',)
     search_fields = ('title',)
-    fields = ['title',]
+    field = ['title', 'city_id']
     ordering = ('title',)
 
 

@@ -1,4 +1,3 @@
-from rest_framework import serializers
 from users.models import AbstractUser
 from .models import ClientReyting
 from .models import Order, ClientNews, ClientTarif, TarifHaridi

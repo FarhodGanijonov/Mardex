@@ -1,4 +1,3 @@
-from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from job.models import CategoryJob, Job, Region, City
 from users.models import AbstractUser

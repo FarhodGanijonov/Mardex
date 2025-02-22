@@ -5,13 +5,8 @@ from .views import ClientDetailView, ClientNewsDetailView, OrderCreateView
 from .views import (
     OrderListView,
     OrderDetailView,
-    JobListByCategoryView,
-    categoryjob_list,
     newsclient_list,
     TarifHaridiCreateView,
-    ClientRegistrationView,
-    ClientLoginView,
-    ClientPasswordChangeView,
     clienttarif_list,
     tarif_list,
     ClientListView,

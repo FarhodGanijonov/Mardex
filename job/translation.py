@@ -1,6 +1,6 @@
 from modeltranslation.translator import TranslationOptions, register
+from .models import CategoryJob, Job
 
-from .models import CategoryJob, Job, City, Region
 
 
 @register(CategoryJob)

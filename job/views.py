@@ -1,8 +1,6 @@
 from rest_framework.decorators import api_view
-from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
 from .models import CategoryJob, Job, City, Region
 from .serializer import CategoryJobSerializer, JobSerializer, CitySerializer, RegionSerializer
 from django.shortcuts import get_object_or_404
