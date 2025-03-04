@@ -1,9 +1,9 @@
 from django.urls import path
 from .views import WorkerRegistrationView, WorkerLoginView, WorkerPasswordChangeView, \
     JobListByCategoryView, categoryjob_list, UpdateUserJobView, OrderStatisticsAPIView, \
-    WorkerProfileUpdateView, AddWorkerImageView, DeleteWorkerImageView, WorkerProfileDetailView, DeleteWorkerImagesView, \
+    WorkerProfileUpdateView, AddWorkerImageView, WorkerProfileDetailView, DeleteWorkerImagesView, \
     WorkerNewsDetailView
-from .views import (RegionListByCityView, DeleteAllWorkerImagesView, WorkerJobListView,
+from .views import (RegionListByCityView, WorkerJobListView,
                     WorkerPhoneUpdateView, JobSearchAPIView, workernews_list)
 
 
@@ -43,10 +43,6 @@ urlpatterns = [
     path('workers/profile/update/', WorkerProfileUpdateView.as_view(), name='worker-profile-update'),
     # Add Worker Image
     path('workers/profile/add-image/', AddWorkerImageView.as_view(), name='add-worker-image'),
-    # Delete Worker Image
-    path('workers/profile/delete-image/<int:image_id>/', DeleteWorkerImageView.as_view(), name='delete-worker-image'),
-    # Delete All Worker Images
-    path('workers/profile/delete-all-images/', DeleteAllWorkerImagesView.as_view(), name='delete-all-worker-images'),
 
 
     # worker imagelarini 2 ta yoki 3 tagacha tanlab bittada delete qilish uchun url

@@ -1,3 +1,6 @@
+from job.views import get_filtered_workers
+from users.models import AbstractUser
+from worker.serializers import WorkerSerializer
 from .models import Order, ClientNews, ClientTarif, TarifHaridi
 from .serializer import (
     OrderSerializer, ClientNewsSerializer, ClientDetailSerializer, ClientTarifSerializer,
@@ -25,6 +28,8 @@ User = get_user_model()
 class OrderCreateView(generics.CreateAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+    permission_classes = [IsAuthenticated]
+
 
 
 class OrderListView(generics.ListAPIView):
@@ -240,3 +245,15 @@ class ClientProfileView(APIView):
         else:
             return Response({"detail": "Foydalanuvchi tizimga kirmagan"}, status=401)
 
+
+class FilteredWorkerListView(generics.ListAPIView):
+    serializer_class = WorkerSerializer
+
+    def get_queryset(self):
+        """Order bo‘yicha filter qilingan worker-larni qaytarish"""
+        order_id = self.kwargs.get("order_id")
+        try:
+            order = Order.objects.get(id=order_id)
+            return get_filtered_workers(order)
+        except Order.DoesNotExist:
+            return AbstractUser.objects.none()

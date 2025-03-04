@@ -239,27 +239,6 @@ class AddWorkerImageView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class DeleteWorkerImageView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def delete(self, request, image_id):
-        # Deleting an image for the authenticated user
-        image = WorkerImage.objects.filter(id=image_id, user=request.user).first()
-        if image:
-            image.delete()
-            return Response({"message": "Tasvir o'chirildi."}, status=status.HTTP_204_NO_CONTENT)
-        return Response({"error": "Tasvir topilmadi."}, status=status.HTTP_404_NOT_FOUND)
-
-
-class DeleteAllWorkerImagesView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def delete(self, request):
-        # Deleting all images for the authenticated user
-        request.user.profileimage.all().delete()
-        return Response({"message": "Barcha tasvirlar o'chirildi."}, status=status.HTTP_204_NO_CONTENT)
-
-
 # har bir worker o'zini profilidagi 5 ta gacha qo'shadigan rasmlarini hohlaganini tanlab delete qiladi
 class DeleteWorkerImagesView(APIView):
     permission_classes = [IsAuthenticated]

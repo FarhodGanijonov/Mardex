@@ -1,6 +1,8 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from users.models import AbstractUser
 from .models import CategoryJob, Job, City, Region
 from .serializer import CategoryJobSerializer, JobSerializer, CitySerializer, RegionSerializer
 from django.shortcuts import get_object_or_404
@@ -78,3 +80,29 @@ class RegionListByCityView(APIView):
         result['regions'] = regions_serializer.data
 
         return Response(result)
+
+
+def get_filtered_workers(order):
+    """ Orderga mos workerlarni filter qilish """
+
+    # Umumiy job_category va region bo‘yicha workerlarni olamiz
+    workers = AbstractUser.objects.filter(
+        role='worker',
+        # status='idle',
+        job_category=order.job_category,
+        region=order.region,
+        city=order.city
+    )
+
+    # ✅ Agar orderda aniq job-lar belgilangan bo‘lsa, ular bo‘yicha ham filterlaymiz
+    if order.job_id.exists():
+        workers = workers.filter(job_id__in=order.job_id.all()).distinct()
+
+    if order.gender:
+        workers = workers.filter(gender=order.gender)
+
+    return workers
+
+
+
+
