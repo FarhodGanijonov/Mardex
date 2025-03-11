@@ -12,8 +12,14 @@ class WorkerImageInline(admin.TabularInline):
 
 @admin.register(User)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ['id', 'full_name', 'description', 'avatar', 'reyting']
-    fields = ['full_name_uz', 'full_name_ru', 'full_name_en', 'description_uz', 'description_ru', 'description_en']
+    list_display = ['id', 'full_name', 'role', 'gender', 'phone', 'is_superuser',]
+    list_filter = ['role', 'gender', 'created_at']
+    search_fields = ['full_name_uz', 'full_name_ru', 'full_name_en', 'phone',]
+    fields = [
+        'full_name_uz', 'full_name_ru', 'full_name_en',
+        'description_uz', 'description_ru', 'description_en',
+        'gender'
+    ]
     inlines = [WorkerImageInline]
 
 

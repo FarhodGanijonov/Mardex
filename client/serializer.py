@@ -19,7 +19,6 @@ class OrderSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 
-
 class ClientRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     password_confirmation = serializers.CharField(write_only=True)

@@ -44,8 +44,6 @@ class UserManager(BaseUserManager):
 
 class AbstractUser(AbstractBaseUser, PermissionsMixin):
     ROLE_CHOICES = [
-        ('Bosh buxgalter', 'Bosh buxgalter'),
-        ('buxgalter', 'buxgalter'),
         ('client', 'client'),
         ('worker', 'worker'),
     ]
@@ -57,10 +55,10 @@ class AbstractUser(AbstractBaseUser, PermissionsMixin):
     role = models.CharField(max_length=50, choices=ROLE_CHOICES)
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
 
-    full_name = models.CharField(max_length=255, blank=True, null=True)
-    phone = models.CharField(max_length=15, unique=True, blank=True, null=True)
-    region = models.ForeignKey(Region, on_delete=models.SET_NULL, blank=True, null=True)
-    city = models.ForeignKey(City, on_delete=models.SET_NULL, blank=True, null=True)
+    full_name = models.CharField(max_length=255)
+    phone = models.CharField(max_length=15, unique=True)
+    region = models.ForeignKey(Region, on_delete=models.CASCADE)
+    city = models.ForeignKey(City, on_delete=models.CASCADE)
     # location = models.JSONField(geography=True, blank=True, null=True)
 
     passport_scan = models.ImageField(upload_to=image_create_time, blank=True, null=True)
